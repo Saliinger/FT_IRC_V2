@@ -22,16 +22,16 @@ class Client
         ~Client();
 
         // Getters & Setters
-        int             getFd() const;
-        bool            isAuthenticated() const;
-        bool            isRegistered() const;
-        std::string     getNickname() const;
-        std::string     getUsername() const;
-        std::string     getIpAdress() const;
+        int                 getFd() const;
+        bool                isAuthenticated() const;
+        bool                isRegistered() const;
+        const std::string&  getNickname() const;
+        const std::string&  getUsername() const;
+        const std::string&  getIpAdress() const;
 
-        void            setNickname(const std::string& nickname);
-        void            setUsername(const std::string& username);
-        void            setIpAdress(const std::string& ipAdress);
+        void                setNickname(const std::string& nickname);
+        void                setUsername(const std::string& username);
+        void                setIpAdress(const std::string& ipAdress);
 
         // Methodes
         void            authenticate();
@@ -42,4 +42,5 @@ class Client
         std::string     extractMessage();
         void            joinChannel(Channel* channel);
         void            leaveChannel(Channel* channel);
+        void            sendMessage(const std::string& message);
 };

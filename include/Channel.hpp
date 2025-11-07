@@ -31,8 +31,8 @@ class Channel
 		const std::string&				getPassword() const;
 		bool							getChannelMode(ChannelModes mode) const;
 
-		void							setPassword(const std::string &pass);
 		void							setTopic(const std::string& topic);
+		void							setPassword(const std::string &pass);
 		void							setChannelMode(ChannelModes mode, bool b);
 
 		// Methodes

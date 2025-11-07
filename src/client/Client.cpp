@@ -1,5 +1,6 @@
 #include "../include/Client.hpp"
 #include "../include/Channel.hpp"
+#include "../include/Utils.hpp"
 
 #include <iostream>
 #include <string>
@@ -24,13 +25,13 @@ bool Client::isAuthenticated() const
 bool Client::isRegistered() const
 { return (_isRegistered); }
 
-std::string Client::getNickname() const
+const std::string&  Client::getNickname() const
 { return (_nickname); }
 
-std::string Client::getUsername() const
+const std::string&  Client::getUsername() const
 { return (_username); }
 
-std::string Client::getIpAdress() const
+const std::string&  Client::getIpAdress() const
 { return (_ipAdress); }
 
 // Setters
@@ -61,7 +62,7 @@ bool    Client::hasCompleteMessage()
 
 std::string Client::extractMessage()
 {
-    int pos = _recvBuffer.find("\r\n");
+    size_t  pos = _recvBuffer.find("\r\n");
     if (pos == std::string::npos)
         return ("");
     std::string message = _recvBuffer.substr(0, pos + 2);
@@ -82,3 +83,6 @@ void    Client::leaveChannel(Channel* channel)
     _channelList.erase(channel->getChannelName());
     channel->removeClient(this);
 }
+
+void    Client::sendMessage(const std::string& message)
+{ sendToClient(_fd, message); }

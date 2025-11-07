@@ -30,15 +30,21 @@ const std::map<int, Client *>& Channel::getOperators() const
 const std::string&  Channel::getTopic() const
 { return (_topic); }
 
+const std::string&  Channel::getPassword() const
+{ return (_password); }
+
 bool    Channel::getChannelMode(ChannelModes mode) const
 { return _modes.getMode(mode); }
 
 // Setters
-void    Channel::setChannelMode(ChannelModes mode, bool b)
-{ _modes.setMode(mode, b); }
+void    Channel::setPassword(const std::string& password)
+{ _password = password; }
 
 void    Channel::setTopic(const std::string& topic)
 { _topic = topic; }
+
+void    Channel::setChannelMode(ChannelModes mode, bool b)
+{ _modes.setMode(mode, b); }
 
 // Methodes
 void    Channel::addClient(Client* client)
@@ -88,10 +94,3 @@ void    Channel::sendMessageToClients(int fd, const std::string& message)
         it++;
     }
 }
-
-
-void    Channel::setPassword(const std::string &pass)
-{ _password = pass; }
-
-const std::string   &Channel::getPassword() const
-{ return (_password); }
