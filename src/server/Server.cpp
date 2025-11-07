@@ -48,7 +48,7 @@ Server::Server(std::string pass, int port) : _pass(pass), _port(port)
 
 	fcntl(_server_fd, F_SETFL, O_NONBLOCK); // set to non blocking means that we don't wait for a respond
 
-	std::cout << "FT_IRC\nPort: " + _port << "\nPassword: " + _pass << std::endl;
+	std::cout << "FT_IRC\nPort: " << _port << "\nPassword: " << _pass << std::endl;
 	_pollfds.push_back((pollfd){
 		_server_fd,
 		POLLIN,

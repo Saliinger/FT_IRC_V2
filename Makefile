@@ -12,7 +12,9 @@ SOURCES =	$(SRCDIR)/main.cpp \
 			$(SRCDIR)/channel/Channel.cpp \
 			$(SRCDIR)/channel/Modes.cpp \
 			$(SRCDIR)/client/Client.cpp \
+			$(SRCDIR)/commands/Command.cpp \
 			$(SRCDIR)/commands/CommandHandler.cpp \
+			$(SRCDIR)/commands/NickCommand.cpp \
 			$(SRCDIR)/server/Server.cpp \
 			$(SRCDIR)/server/ServerCommands.cpp \
 			$(SRCDIR)/server/ServerNetwork.cpp

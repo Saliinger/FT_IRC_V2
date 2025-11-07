@@ -57,7 +57,7 @@ void Server::recData(const int &fd)
 	char buffer[1024];
 
 	int bytes_read = -1;
-	while (bytes_read = recv(fd, &buffer, sizeof(buffer), 0))
+	while ((bytes_read = recv(fd, &buffer, sizeof(buffer), 0)))
 	{
 		if (bytes_read < 0)
 			break;
