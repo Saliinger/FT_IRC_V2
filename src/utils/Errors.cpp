@@ -1,4 +1,4 @@
-#include "../include/Errors.hpp"
+#include "../include/Error.hpp"
 
 // Format: :<server> <code> <target> <message>
 std::string formatReply(const std::string &code, const std::string &target, const std::string &message)
