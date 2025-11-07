@@ -15,6 +15,8 @@ SOURCES =	$(SRCDIR)/main.cpp \
 			$(SRCDIR)/commands/Command.cpp \
 			$(SRCDIR)/commands/CommandHandler.cpp \
 			$(SRCDIR)/commands/NickCommand.cpp \
+			$(SRCDIR)/commands/PassCommand.cpp \
+			$(SRCDIR)/commands/UserCommand.cpp \
 			$(SRCDIR)/server/Server.cpp \
 			$(SRCDIR)/server/ServerCommands.cpp \
 			$(SRCDIR)/server/ServerNetwork.cpp
