@@ -36,6 +36,8 @@ public:
 	void setupSignalHandlers();
 	int getSig();
 
+	bool	isNicknameUsed(const std::string &nick) const;
+
 private:
 	static Server *_instance;
 	std::map<int, Client *> _clients;

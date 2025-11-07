@@ -55,3 +55,15 @@ Server::Server(std::string pass, int port) : _pass(pass), _port(port)
 		0});
 	_sig = 0;
 }
+
+
+bool	Server::isNicknameUsed(const std::string &nick) const
+{
+	for (std::map<int, Client *>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+		Client *client = it->second;
+		if (client && client->getNickname() == nick)
+			return (true);
+	}
+	return (false);
+}
