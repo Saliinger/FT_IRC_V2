@@ -21,14 +21,29 @@ CommandHandler::~CommandHandler()
 
 void    CommandHandler::handleCommand(Server &server, Client &client, const std::string &input)
 {
-    std::istringstream          iss(input);
-    std::string                 cmd;
-    std::vector<std::string>    args;
-    std::string                 arg;
-    
+    std::istringstream iss(input);
+    std::string cmd;
+    std::vector<std::string> args;
+    std::string token;
+
     iss >> cmd;
-    while (iss >> arg)
-        args.push_back(arg);
+    bool colonFound = false;
+    std::string lastArg;
+
+    while (iss >> token)
+    {
+        if (!colonFound && token[0] == ':')
+        {
+            colonFound = true;
+            lastArg = token.substr(1);
+        }
+        else if (colonFound)
+            lastArg += " " + token;
+        else
+            args.push_back(token);
+    }
+    if (colonFound)
+        args.push_back(lastArg);
     for (size_t i = 0; i < cmd.size(); ++i)
         cmd[i] = toupper(cmd[i]);
     if (_commands.find(cmd) != _commands.end())
