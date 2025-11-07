@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 
-class Client;
 class Server;
+class Client;
 
 class Command {
 	public:

@@ -1,11 +1,14 @@
 #include "../../include/CommandHandler.hpp"
+#include "../../include/Client.hpp"
+#include "../../include/Server.hpp"
+#include "../../include/NickCommand.hpp"
 
 #include <iostream>
 #include <sstream>
 
 CommandHandler::CommandHandler()
 {
-    _commands["NEWCOMEX"] = new NewComEx();
+    _commands["NICK"] = new NickCommand();
 }
 
 CommandHandler::~CommandHandler()
@@ -18,10 +21,10 @@ void    CommandHandler::handleCommand(Server &server, Client &client, const std:
 {
     std::istringstream          iss(input);
     std::string                 cmd;
-    iss >> cmd;
-    
     std::vector<std::string>    args;
     std::string                 arg;
+    
+    iss >> cmd;
     while (iss >> arg)
         args.push_back(arg);
     for (size_t i = 0; i < cmd.size(); ++i)
