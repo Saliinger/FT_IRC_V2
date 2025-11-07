@@ -1,16 +1,13 @@
-#pragma once 
+#pragma once
 
-#include "Server.hpp"
-#include "Client.hpp"
-#include "CommandHandler.hpp"
+#include <string>
+#include <vector>
+
+class Client;
+class Server;
 
 class Command {
 	public:
-		Command(Server &Server);
-		Command(const Command &src);
-		Command &operator=(const Command &src);
-		~Command();
-
-	private:
-		Server &server;
+		virtual ~Command();
+		virtual void execute(Server &server, Client &client, const std::vector<std::string> &args) = 0;
 };
