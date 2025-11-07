@@ -2,6 +2,7 @@
 #include "../../include/Client.hpp"
 #include "../../include/Server.hpp"
 #include "../../include/NickCommand.hpp"
+#include "../../include/PassCommand.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -9,6 +10,7 @@
 CommandHandler::CommandHandler()
 {
     _commands["NICK"] = new NickCommand();
+    _commands["PASS"] = new PassCommand();
 }
 
 CommandHandler::~CommandHandler()

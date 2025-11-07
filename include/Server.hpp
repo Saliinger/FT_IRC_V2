@@ -37,6 +37,7 @@ public:
 	int getSig();
 
 	bool	isNicknameUsed(const std::string &nick) const;
+	const std::string	&getPassword() const;
 
 private:
 	static Server *_instance;

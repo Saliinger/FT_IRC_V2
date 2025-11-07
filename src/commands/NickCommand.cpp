@@ -43,6 +43,7 @@ void NickCommand::execute(Server &server, Client &client, const std::vector<std:
         client.sendMessage(":server 433 * " + newNick + " :Nickname is already in use");
         return;
     }
+    
     std::string oldNick = client.getNickname();
     
     if (!oldNick.empty())

@@ -67,3 +67,6 @@ bool	Server::isNicknameUsed(const std::string &nick) const
 	}
 	return (false);
 }
+
+const std::string	&Server::getPassword() const
+{ return (_pass); }
