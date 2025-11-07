@@ -48,3 +48,6 @@ private:
 	int _sig;
 	CommandHandler _commandHandler;
 };
+
+// add check nickname 
+// getPass();
