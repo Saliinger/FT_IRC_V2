@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <istream>
 #include <string>
 #include <map>
 #include <exception>

@@ -21,10 +21,43 @@ void Server::run()
 
 void Server::acceptClient()
 {
-	_clients_fd = accept(_server_fd, )
-}
+	int _client_fd = accept(_server_fd, NULL, NULL);
+	if (_client_fd < 0)
+		throw std::runtime_error("Error: cliant connection failed.");
 
+	_clients[_client_fd] = new Client(_client_fd);
+
+	// add client to poll to listen from
+	_pollfds.push_back((pollfd){
+		_client_fd,
+		POLLIN,
+		0});
+
+	// renvoyer la connection
+	// repondre au CAP_LS
+}
 
 void Server::recData(const int &fd)
 {
+	Client *target = _clients.find(fd)->second;
+	if (!target)
+	{
+		throw std::runtime_error("Error: client does not exist.");
+		return;
+	}
+
+	char buffer[1024];
+
+	int bytes_read = -1;
+	while (bytes_read = recv(fd, &buffer, sizeof(buffer), 0))
+	{
+		if (bytes_read < 0)
+			break;
+		buffer[bytes_read] = '\0';
+		std::string to_add(buffer);
+		target->appendToRecvBuffer(to_add);
+	}
+
+	if (target->hasCompleteMessage())
+		std::cout << target->extractMessage() << std::endl; // redirect to command
 }

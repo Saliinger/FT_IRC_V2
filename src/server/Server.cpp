@@ -19,7 +19,9 @@ Server &Server::operator=(const Server &src)
 	return *this;
 }
 
-Server::~Server() {}
+Server::~Server() {
+	// delet each client and channel
+}
 
 Server::Server(std::string pass, int port) : _pass(pass), _port(port)
 {

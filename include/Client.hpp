@@ -31,7 +31,7 @@ class Client
 
         void            setNickname(const std::string& nickname);
         void            setUsername(const std::string& username);
-        void            setIpAdress(const std::stirng& ipAdress);
+        void            setIpAdress(const std::string& ipAdress);
 
         // Methodes
         void            authenticate();
