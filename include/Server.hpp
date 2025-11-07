@@ -7,10 +7,12 @@
 #include <exception>
 #include <poll.h>
 #include <fcntl.h>
+#include <csignal>
 
 #include "Client.hpp"
 #include "Channel.hpp"
 #include "Command.hpp"
+#include "CommandHandler.hpp"
 #include "Error.hpp"
 #include "Utils.hpp"
 
@@ -29,10 +31,13 @@ public:
 	void acceptClient();
 	void recData(const int &fd);
 
-	// ServerCommand
+	// signal command
+	static void signalHandler(int sig);
+	void setupSignalHandlers();
+	int getSig();
 
-	// signal
 private:
+	static Server *_instance;
 	std::map<int, Client *> _clients;
 	std::map<std::string, Channel *> _channels;
 	std::string _pass;
@@ -40,4 +45,6 @@ private:
 	std::vector<pollfd> _pollfds;
 	int _server_fd;
 	bool _isRunning;
+	int _sig;
+	CommandHandler _commandHandler;
 };

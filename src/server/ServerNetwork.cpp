@@ -3,20 +3,28 @@
 
 void Server::run()
 {
+	_isRunning = true;
+	setupSignalHandlers();
+
 	while (_isRunning)
 	{
-		if (poll(&_pollfds[0], _pollfds.size(), -1))
-			throw std::runtime_error("Error: poll failed.");
-		for (int i = 0; i < _pollfds.size(); i++)
+		if (poll(&_pollfds[0], _pollfds.size(), -1) < 0)
+		{
+			if (_isRunning) // Only throw if not interrupted by signal
+				throw std::runtime_error("Error: poll failed.");
+			break;
+		}
+		for (size_t i = 0; i < _pollfds.size(); i++)
 		{
 			if (_pollfds[i].fd == _server_fd)
 				acceptClient();
 			else if (_pollfds[i].revents & POLLIN)
 				recData(_pollfds[i].fd);
 			else if (_pollfds[i].revents & (POLLERR | POLLHUP))
-				std::cout << "Hang up" << std::endl;
+				std::cout << "Hang up" << std::endl; // need to close fd. keep client in case reconnect
 		}
 	}
+	std::cout << "Server stopped." << std::endl;
 }
 
 void Server::acceptClient()

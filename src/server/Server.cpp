@@ -2,7 +2,7 @@
 
 Server::Server() : _clients(), _channels(), _isRunning(false) {}
 
-Server::Server(const Server &src) : _clients(src._clients), _channels(src._channels), _isRunning(src._isRunning) {}
+Server::Server(const Server &src) : _clients(src._clients), _channels(src._channels), _isRunning(src._isRunning), _sig(src._sig), _commandHandler(src._commandHandler) {}
 
 Server &Server::operator=(const Server &src)
 {
@@ -15,11 +15,14 @@ Server &Server::operator=(const Server &src)
 		_pollfds = src._pollfds;
 		_server_fd = src._server_fd;
 		_isRunning = src._isRunning;
+		_sig = src._sig;
+		_commandHandler = src._commandHandler;
 	}
 	return *this;
 }
 
-Server::~Server() {
+Server::~Server()
+{
 	// delet each client and channel
 }
 
@@ -30,12 +33,12 @@ Server::Server(std::string pass, int port) : _pass(pass), _port(port)
 		throw std::runtime_error("Error: socket failed.");
 
 	int opt = 1;
-	setsockopt(_server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)); // block socket for this program 
+	setsockopt(_server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)); // block socket for this program
 
 	sockaddr_in addr;
 
-	addr.sin_family = AF_INET; // setup for ipv4 can use AF_INET6 for ipv6
-	addr.sin_port = htons(_port); // host on port 
+	addr.sin_family = AF_INET;		   // setup for ipv4 can use AF_INET6 for ipv6
+	addr.sin_port = htons(_port);	   // host on port
 	addr.sin_addr.s_addr = INADDR_ANY; // open to all address incomming connection
 
 	if (bind(_server_fd, (sockaddr *)&addr, sizeof(addr)) < 0)
@@ -45,9 +48,10 @@ Server::Server(std::string pass, int port) : _pass(pass), _port(port)
 
 	fcntl(_server_fd, F_SETFL, O_NONBLOCK); // set to non blocking means that we don't wait for a respond
 
-	std::cout << "FT_IRC\n Port: " + _port << "\nPassword: " + _pass << std::endl;
+	std::cout << "FT_IRC\nPort: " + _port << "\nPassword: " + _pass << std::endl;
 	_pollfds.push_back((pollfd){
 		_server_fd,
 		POLLIN,
 		0});
+	_sig = 0;
 }
