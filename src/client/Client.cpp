@@ -53,6 +53,22 @@ void    Client::unAuthenticate()
 void    Client::registerClient()
 { _isRegistered = true; }
 
+void    Client::appendToRecvBuffer(const std::string& data)
+{ _recvBuffer += data; }
+
+bool    Client::hasCompleteMessage()
+{ return (_recvBuffer.find("\r\n") != std::string::npos); }
+
+std::string Client::extractMessage()
+{
+    int pos = _recvBuffer.find("\r\n");
+    if (pos == std::string::npos)
+        return ("");
+    std::string message = _recvBuffer.substr(0, pos + 2);
+    _recvBuffer.erase(0, pos + 2);
+    return (message);
+}
+
 void    Client::joinChannel(Channel* channel)
 {
     std::cout << "Client: " << _username << " joined channel: " << channel->getChannelName() << std::endl;

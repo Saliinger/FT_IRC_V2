@@ -14,6 +14,7 @@ class Client
         std::string                         _nickname;
         std::string                         _username;
         std::string                         _ipAdress;
+        std::string                         _recvBuffer;
         std::map<std::string, Channel *>    _channelList;
 
     public:
@@ -36,7 +37,9 @@ class Client
         void            authenticate();
         void            unAuthenticate();
         void            registerClient();
+        void            appendToRecvBuffer(const std::string& data);
+        bool            hasCompleteMessage();
+        std::string     extractMessage();
         void            joinChannel(Channel* channel);
         void            leaveChannel(Channel* channel);
-        void            listChannels();
 };
