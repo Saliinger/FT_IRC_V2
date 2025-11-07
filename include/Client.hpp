@@ -13,6 +13,7 @@ class Client
         bool                                _isRegistered;
         std::string                         _nickname;
         std::string                         _username;
+        std::string                         _ipAdress;
         std::map<std::string, Channel *>    _channelList;
 
     public:
@@ -25,9 +26,11 @@ class Client
         bool            isRegistered() const;
         std::string     getNickname() const;
         std::string     getUsername() const;
+        std::string     getIpAdress() const;
 
         void            setNickname(const std::string& nickname);
         void            setUsername(const std::string& username);
+        void            setIpAdress(const std::stirng& ipAdress);
 
         // Methodes
         void            authenticate();

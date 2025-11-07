@@ -30,12 +30,18 @@ std::string Client::getNickname() const
 std::string Client::getUsername() const
 { return (_username); }
 
+std::string Client::getIpAdress() const
+{ return (_ipAdress); }
+
 // Setters
 void    Client::setNickname(const std::string& nickname)
 { _nickname = nickname; }
 
 void    Client::setUsername(const std::string& username)
 { _username = username; }
+
+void    Client::setIpAdress(const std::string& ipAdress)
+{ _ipAdress = ipAdress; }
 
 //Methodes
 void    Client::authenticate()
