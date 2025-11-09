@@ -16,10 +16,13 @@ void Server::run()
 		}
 		for (size_t i = 0; i < _pollfds.size(); i++)
 		{
-			if (_pollfds[i].fd == _server_fd)
-				acceptClient();
-			else if (_pollfds[i].revents & POLLIN)
-				recData(_pollfds[i].fd);
+			if (_pollfds[i].revents & POLLIN)
+			{
+				if (_pollfds[i].fd == _server_fd)
+					acceptClient();
+				else
+					recData(_pollfds[i].fd);
+			}
 			else if (_pollfds[i].revents & (POLLERR | POLLHUP))
 				std::cout << "Hang up" << std::endl; // need to close fd. keep client in case reconnect
 		}
@@ -31,7 +34,13 @@ void Server::acceptClient()
 {
 	int _client_fd = accept(_server_fd, NULL, NULL);
 	if (_client_fd < 0)
-		throw std::runtime_error("Error: cliant connection failed.");
+	{
+		if (errno == EAGAIN || errno == EWOULDBLOCK)
+			return; // No connection waiting, just return
+		throw std::runtime_error("Error: client connection failed.");
+	}
+
+	fcntl(_client_fd, F_SETFL, O_NONBLOCK); // Set client socket to non-blocking
 
 	_clients[_client_fd] = new Client(_client_fd);
 
@@ -41,8 +50,7 @@ void Server::acceptClient()
 		POLLIN,
 		0});
 
-	// renvoyer la connection
-	// repondre au CAP_LS
+	std::cout << "New client connected: fd " << _client_fd << std::endl;
 }
 
 void Server::recData(const int &fd)
@@ -66,11 +74,24 @@ void Server::recData(const int &fd)
 		target->appendToRecvBuffer(to_add);
 	}
 
-	if (target->hasCompleteMessage())
+	while (target->hasCompleteMessage())
 	{
 		std::string msg = target->extractMessage();
-		std::cout << msg << std::endl; // redirect to command}
-		CommandHandler to_run;
+		std::cout << msg << std::endl; // DEBUG
 
-		to_run.handleCommand(*this, *target, msg);
+		// Handle CAP directly
+		if (msg.find("CAP LS") == 0 || msg.find("CAP LS ") == 0)
+		{
+			sendToClient(fd, ":ft_irc CAP * LS :\r\n");
+		}
+		else if (msg.find("CAP END") == 0)
+		{
+			// CAP void not suported
+		}
+		else
+		{
+			CommandHandler to_run;
+			to_run.handleCommand(*this, *target, msg);
+		}
 	}
+}

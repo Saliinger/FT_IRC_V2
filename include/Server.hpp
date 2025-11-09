@@ -8,6 +8,7 @@
 #include <poll.h>
 #include <fcntl.h>
 #include <csignal>
+#include <cerrno>
 
 #include "Client.hpp"
 #include "Channel.hpp"
@@ -36,8 +37,8 @@ public:
 	void setupSignalHandlers();
 	int getSig();
 
-	bool	isNicknameUsed(const std::string &nick) const;
-	const std::string	&getPassword() const;
+	bool isNicknameUsed(const std::string &nick) const;
+	const std::string &getPassword() const;
 
 private:
 	static Server *_instance;
@@ -52,5 +53,5 @@ private:
 	CommandHandler _commandHandler;
 };
 
-// add check nickname 
+// add check nickname
 // getPass();
