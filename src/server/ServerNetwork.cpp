@@ -70,7 +70,7 @@ void Server::recData(const int &fd)
 	{
 		std::string msg = target->extractMessage();
 		std::cout << msg << std::endl; // redirect to command}
-		CommandHandler to_run();
+		CommandHandler to_run;
 
-		to_run.handlCommand(*this, *target, msg);
+		to_run.handleCommand(*this, *target, msg);
 	}
