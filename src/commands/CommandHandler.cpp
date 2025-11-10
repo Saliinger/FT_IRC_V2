@@ -4,6 +4,11 @@
 #include "../../include/NickCommand.hpp"
 #include "../../include/PassCommand.hpp"
 #include "../../include/UserCommand.hpp"
+#include "../../include/JoinCommand.hpp"
+#include "../../include/PingCommand.hpp"
+#include "../../include/PongCommand.hpp"
+#include "../../include/KickCommand.hpp"
+#include "../../include/InviteCommand.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -13,6 +18,11 @@ CommandHandler::CommandHandler()
     _commands["NICK"] = new NickCommand();
     _commands["PASS"] = new PassCommand();
     _commands["USER"] = new UserCommand();
+    _commands["JOIN"] = new JoinCommand();
+    _commands["PING"] = new PingCommand();
+    _commands["PONG"] = new PongCommand();
+    _commands["KICK"] = new KickCommand();
+    _commands["INVITE"] = new InviteCommand();
 }
 
 CommandHandler::~CommandHandler()

@@ -6,14 +6,16 @@
 
 void UserCommand::execute(Server &server, Client &client, const std::vector<std::string> &args) 
 {
+    (void) server;
+
     if (args.size() < 4)
     {
-        client.sendMessage(":localhost 461 * USER :Not enough parameters");
+        client.sendMessage(":localhost 461 * USER :Not enough parameters\r\n");
         return;
     }
     if (client.isRegistered())
     {
-        client.sendMessage(":localhost 462 " + client.getNickname() + " :You may not reregister");
+        client.sendMessage(":localhost 462 " + client.getNickname() + " :You may not reregister\r\n");
         return;
     }
     std::string username = args[0];
@@ -28,12 +30,12 @@ void UserCommand::execute(Server &server, Client &client, const std::vector<std:
         client.sendMessage(":localhost 001 " + client.getNickname() + 
                           " :Welcome to the Internet Relay Network " + 
                           client.getNickname() + "!" + client.getUsername() + 
-                          "@" + client.getIpAdress());
+                          "@" + client.getIpAdress() + "\r\n");
         client.sendMessage(":localhost 002 " + client.getNickname() + 
-                          " :Your host is localhost, running version 1.0");
+                          " :Your host is localhost, running version 1.0\r\n");
         client.sendMessage(":localhost 003 " + client.getNickname() + 
-                          " :This server was created today");
+                          " :This server was created today\r\n");
         client.sendMessage(":localhost 004 " + client.getNickname() + 
-                          " localhost 1.0 io itkol");
+                          " localhost 1.0 io itkol\r\n");
     }
 }

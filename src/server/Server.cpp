@@ -70,3 +70,8 @@ bool	Server::isNicknameUsed(const std::string &nick) const
 
 const std::string	&Server::getPassword() const
 { return (_pass); }
+
+std::map<std::string, Channel *> Server::getChannels() const
+{
+	return (_channels);
+}

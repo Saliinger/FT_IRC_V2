@@ -27,7 +27,7 @@ void NickCommand::execute(Server &server, Client &client, const std::vector<std:
 {
     if (args.empty())
     {
-        client.sendMessage(":server 431 * :No nickname given");
+        client.sendMessage(":server 431 * :No nickname given\r\n");
         return;
     }
     
@@ -35,21 +35,21 @@ void NickCommand::execute(Server &server, Client &client, const std::vector<std:
     
     if (!isValidNickname(newNick))
     {
-        client.sendMessage(":server 432 * " + newNick + " :Erroneous nickname");
+        client.sendMessage(":server 432 * " + newNick + " :Erroneous nickname\r\n");
         return;
     }
     if (server.isNicknameUsed(newNick))
     {
-        client.sendMessage(":server 433 * " + newNick + " :Nickname is already in use");
+        client.sendMessage(":server 433 * " + newNick + " :Nickname is already in use\r\n");
         return;
     }
-    
+
     std::string oldNick = client.getNickname();
     
     if (!oldNick.empty())
     {
         client.sendMessage(":" + oldNick + "!" + client.getUsername() + "@" + 
-                          client.getIpAdress() + " NICK :" + newNick);
+                          client.getIpAdress() + " NICK :" + newNick + "\r\n");
     }
     client.setNickname(newNick);
 }

@@ -17,6 +17,11 @@ SOURCES =	$(SRCDIR)/main.cpp \
 			$(SRCDIR)/commands/NickCommand.cpp \
 			$(SRCDIR)/commands/PassCommand.cpp \
 			$(SRCDIR)/commands/UserCommand.cpp \
+			$(SRCDIR)/commands/JoinCommand.cpp \
+			$(SRCDIR)/commands/PingCommand.cpp \
+			$(SRCDIR)/commands/PongCommand.cpp \
+			$(SRCDIR)/commands/KickCommand.cpp \
+			$(SRCDIR)/commands/InviteCommand.cpp \
 			$(SRCDIR)/server/Server.cpp \
 			$(SRCDIR)/server/ServerCommands.cpp \
 			$(SRCDIR)/server/ServerNetwork.cpp
