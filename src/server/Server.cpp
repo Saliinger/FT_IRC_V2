@@ -24,6 +24,22 @@ Server &Server::operator=(const Server &src)
 Server::~Server()
 {
 	// delet each client and channel
+	std::map<int, Client *>::iterator it = _clients.begin();
+	std::map<int, Client *>::iterator ite = _clients.end();
+	while(it != ite)
+	{
+		delete it->second;
+		it++;
+	}
+
+	std::map<std::string, Channel *>::iterator itc = _channels.begin();
+	std::map<std::string, Channel *>::iterator itce = _channels.end();
+	while (itc != itce)
+	{
+		delete itc->second;
+		itc++;
+	}
+	
 }
 
 Server::Server(std::string pass, int port) : _pass(pass), _port(port)
