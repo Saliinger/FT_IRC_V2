@@ -10,4 +10,5 @@ void PongCommand::execute(Server &server, Client &client, const std::vector<std:
     (void)client;
     (void)args;
 
+	client.sendMessage(":ft_irc PONG\r\n");
 }
