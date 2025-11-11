@@ -42,6 +42,7 @@ public:
 	std::map<std::string, Channel *> getChannels() const;
 	Channel *getChannel(const std::string &channelName) const;
 	Client *getClient(const std::string &clientNick) const;
+	void addChannel(Channel *to_add);
 
 private:
 	static Server *_instance;

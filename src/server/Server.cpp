@@ -111,3 +111,9 @@ Client *Server::getClient(const std::string &clientNick) const
 	}
 	return NULL;
 }
+
+void Server::addChannel(Channel *to_add)
+{
+	_channels[to_add->getChannelName()] = to_add;
+	std::cout << "DEBUG: channel added " + to_add->getChannelName() << std::endl;
+}

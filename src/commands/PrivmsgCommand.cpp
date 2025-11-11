@@ -2,33 +2,42 @@
 
 static int getType(const std::string &to_check)
 {
-	if (to_check[0] == '#')
+	if (!to_check.empty() && to_check[0] == '#')
 		return 1;
 	return 0;
 }
 
 void PrivmsgCommand::execute(Server &server, Client &client, const std::vector<std::string> &args)
 {
-	std::string msg(args[2]);
-	if (getType(args[1])) // type 1 channel
+	if (args.size() < 2)
 	{
-		Channel *target = server.getChannel(args[1]);
+		client.sendMessage(":localhost 461 " + client.getNickname() + " PRIVMSG :Not enough parameters\r\n");
+		return;
+	}
+
+	std::string target_name = args[0];
+	std::string msg = args[1];
+	std::string fullMsg = ":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getIpAdress() + " PRIVMSG " + target_name + " :" + msg + "\r\n";
+
+	if (getType(target_name)) // type 1 channel
+	{
+		Channel *target = server.getChannel(target_name);
 		if (!target)
 		{
-			std::cout << "Error: channel error" << std::endl;
+			client.sendMessage(":localhost 403 " + client.getNickname() + " " + target_name + " :No such channel\r\n");
 			return;
 		}
-		target->sendMessageToClients(client.getFd(), msg);
+		target->sendMessageToClients(client.getFd(), fullMsg);
 	}
 	else // autre type msg vers nickname
 	{
-		Client *target = server.getClient(args[1]);
+		Client *target = server.getClient(target_name);
 		if (!target)
 		{
-			std::cout << "Error: channel error" << std::endl;
+			client.sendMessage(":localhost 401 " + client.getNickname() + " " + target_name + " :No such nick/channel\r\n");
 			return;
 		}
-		target->sendMessage(msg);
+		target->sendMessage(fullMsg);
 	}
 }
 

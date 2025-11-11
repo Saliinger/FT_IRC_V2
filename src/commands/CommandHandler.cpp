@@ -9,6 +9,7 @@
 #include "../../include/PongCommand.hpp"
 #include "../../include/KickCommand.hpp"
 #include "../../include/InviteCommand.hpp"
+#include "../../include/PrivmsgCommand.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -23,6 +24,7 @@ CommandHandler::CommandHandler()
     _commands["PONG"] = new PongCommand();
     _commands["KICK"] = new KickCommand();
     _commands["INVITE"] = new InviteCommand();
+	_commands["PRIVMSG"] = new PrivmsgCommand();
 }
 
 CommandHandler::~CommandHandler()
