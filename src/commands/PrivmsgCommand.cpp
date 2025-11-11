@@ -9,7 +9,7 @@ static int getType(const std::string &to_check)
 
 void PrivmsgCommand::execute(Server &server, Client &client, const std::vector<std::string> &args)
 {
-	std::string msg(args[2] + "\r\n");
+	std::string msg(args[2]);
 	if (getType(args[1])) // type 1 channel
 	{
 		Channel *target = server.getChannel(args[1]);

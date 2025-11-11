@@ -34,7 +34,8 @@ std::vector<std::string> split(const std::string &str, char delimiter)
 
 void sendToClient(int fd, const std::string &msg)
 {
-	ssize_t bytes = send(fd, msg.c_str(), msg.size(), 0);
+	std::string to_send(msg + "\r\n");
+	ssize_t bytes = send(fd, to_send.c_str(), to_send.size(), 0);
 	if (bytes == -1)
 	{
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
