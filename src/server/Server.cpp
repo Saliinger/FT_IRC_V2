@@ -97,3 +97,17 @@ Channel *Server::getChannel(const std::string &channelName) const
 	std::map<std::string, Channel *>::const_iterator it = _channels.find(channelName);
 	return (it->second);
 }
+
+Client *Server::getClient(const std::string &clientNick) const
+{
+	std::map<int, Client *>::const_iterator it = _clients.begin();
+	std::map<int, Client *>::const_iterator ite = _clients.end();
+
+	while (it != ite)
+	{
+		if (it->second->getNickname() == clientNick)
+			return it->second;
+		++it;
+	}
+	return NULL;
+}

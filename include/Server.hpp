@@ -41,6 +41,7 @@ public:
 	const std::string &getPassword() const;
 	std::map<std::string, Channel *> getChannels() const;
 	Channel *getChannel(const std::string &channelName) const;
+	Client *getClient(const std::string &clientNick) const;
 
 private:
 	static Server *_instance;
