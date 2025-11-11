@@ -26,7 +26,7 @@ Server::~Server()
 	// delet each client and channel
 	std::map<int, Client *>::iterator it = _clients.begin();
 	std::map<int, Client *>::iterator ite = _clients.end();
-	while(it != ite)
+	while (it != ite)
 	{
 		delete it->second;
 		it++;
@@ -39,7 +39,6 @@ Server::~Server()
 		delete itc->second;
 		itc++;
 	}
-	
 }
 
 Server::Server(std::string pass, int port) : _pass(pass), _port(port)
@@ -72,8 +71,7 @@ Server::Server(std::string pass, int port) : _pass(pass), _port(port)
 	_sig = 0;
 }
 
-
-bool	Server::isNicknameUsed(const std::string &nick) const
+bool Server::isNicknameUsed(const std::string &nick) const
 {
 	for (std::map<int, Client *>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
@@ -84,10 +82,18 @@ bool	Server::isNicknameUsed(const std::string &nick) const
 	return (false);
 }
 
-const std::string	&Server::getPassword() const
-{ return (_pass); }
+const std::string &Server::getPassword() const
+{
+	return (_pass);
+}
 
 std::map<std::string, Channel *> Server::getChannels() const
 {
 	return (_channels);
+}
+
+Channel *Server::getChannel(const std::string &channelName) const
+{
+	std::map<std::string, Channel *>::const_iterator it = _channels.find(channelName);
+	return (it->second);
 }

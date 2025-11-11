@@ -40,6 +40,7 @@ public:
 	bool isNicknameUsed(const std::string &nick) const;
 	const std::string &getPassword() const;
 	std::map<std::string, Channel *> getChannels() const;
+	Channel *getChannel(const std::string &channelName) const;
 
 private:
 	static Server *_instance;
