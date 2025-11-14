@@ -2,16 +2,12 @@
 
 void QuitCommand::execute(Server &server, Client &client, const std::vector<std::string> &args)
 {
-	(void)server;
 	client.isAuthenticated(); // logout
-	std::cout << "QUIT DEBUG" << std::endl;
-	for (std::vector<std::string>::const_iterator it = args.begin(); it != args.end(); it++)
-		std::cout << *it << std::endl;
 	close(client.getFd());
-	Channel *channels = client.getChannelList();
 
+	Channel *channels = client.getChannelList();
 	for (std::map<std::string, Channel *>::iterator itc = channels.begin(); it != channels.end(); it++)
-		it->sendMessage("bye\r\n");
+		it->sendMessage(args[0] + "\r\n");
 	
 	// add to departed
 	server.addDeparted(client);
