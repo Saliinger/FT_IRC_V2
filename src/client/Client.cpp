@@ -34,6 +34,9 @@ const std::string&  Client::getUsername() const
 const std::string&  Client::getIpAdress() const
 { return (_ipAdress); }
 
+const std::map<std::string, Channel *>& getChannelList() const
+{ return (_channelList); }
+
 // Setters
 void    Client::setNickname(const std::string& nickname)
 { _nickname = nickname; }

@@ -22,12 +22,13 @@ class Client
         ~Client();
 
         // Getters & Setters
-        int                 getFd() const;
-        bool                isAuthenticated() const;
-        bool                isRegistered() const;
-        const std::string&  getNickname() const;
-        const std::string&  getUsername() const;
-        const std::string&  getIpAdress() const;
+        int                                     getFd() const;
+        bool                                    isAuthenticated() const;
+        bool                                    isRegistered() const;
+        const std::string&                      getNickname() const;
+        const std::string&                      getUsername() const;
+        const std::string&                      getIpAdress() const;
+        const std::map<std::string, Channel *>& getChannelList() const;
 
         void                setNickname(const std::string& nickname);
         void                setUsername(const std::string& username);
