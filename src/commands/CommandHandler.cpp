@@ -10,6 +10,7 @@
 #include "../../include/KickCommand.hpp"
 #include "../../include/InviteCommand.hpp"
 #include "../../include/PrivmsgCommand.hpp"
+#include "../../include/QuitCommand.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -25,6 +26,7 @@ CommandHandler::CommandHandler()
     _commands["KICK"] = new KickCommand();
     _commands["INVITE"] = new InviteCommand();
 	_commands["PRIVMSG"] = new PrivmsgCommand();
+	_commands["QUIT"] = new QuitCommand();
 }
 
 CommandHandler::~CommandHandler()

@@ -117,3 +117,29 @@ void Server::addChannel(Channel *to_add)
 	_channels[to_add->getChannelName()] = to_add;
 	std::cout << "DEBUG: channel added " + to_add->getChannelName() << std::endl;
 }
+
+void Server::addDeparted(Client &client)
+{
+	Client *to_depart = new Client(client);
+	// Client to_depart(client); // possible used of that
+	_departedClients.push_back(to_depart);
+}
+
+void Server::removeDeparted(Client &client)
+{
+	for (std::vector<Client *>::iterator it = _departedClients.begin(); it != _departedClients.end(); it++)
+	{
+		if ((*it)->getUsername() == client.getUsername())
+			_departedClients.erase(it);
+	}
+}
+
+Client *Server::getDeparted(const std::string &name)
+{
+	for (std::vector<Client *>::iterator it = _departedClients.begin(); it != _departedClients.end(); it++)
+	{
+		if ((*it)->getUsername() == name)
+			return *it;
+	}
+	return NULL;
+}

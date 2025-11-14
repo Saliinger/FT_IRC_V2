@@ -37,12 +37,16 @@ public:
 	void setupSignalHandlers();
 	int getSig();
 
-	bool isNicknameUsed(const std::string &nick) const;
+	bool isNicknameUsed(const std::string &nick) const; // need to check in the departed to
 	const std::string &getPassword() const;
 	std::map<std::string, Channel *> getChannels() const;
 	Channel *getChannel(const std::string &channelName) const;
 	Client *getClient(const std::string &clientNick) const;
 	void addChannel(Channel *to_add);
+	void addDeparted(Client &client);
+	void removeDeparted(Client &client);
+	Client *getDeparted(const std::string &name); // use for reconnect on whois
+	void removeClient(Client &client);
 
 private:
 	static Server *_instance;
@@ -55,6 +59,8 @@ private:
 	bool _isRunning;
 	int _sig;
 	CommandHandler _commandHandler;
+
+	std::vector<Client *> _departedClients;
 };
 
 // add check nickname
