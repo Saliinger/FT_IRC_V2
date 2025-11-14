@@ -1,8 +1,13 @@
 #pragma once
 
-#include "./Command.hpp"
+#include <iostream>
+#include <fcntl.h>
 
-class PartCommand: public Command {
-    public:
-        void execute(Server &server, Client &client, const std::vector<std::string> &args);
+#include "./Command.hpp"
+#include "Client.hpp"
+
+class PartCommand : public Command
+{
+public:
+	void execute(Server &server, Client &client, const std::vector<std::string> &args);
 };
