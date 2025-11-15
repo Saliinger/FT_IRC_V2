@@ -11,7 +11,7 @@
 
 // Constructor & Destructor
 Channel::Channel(std::string channelName)
-    :   _channelName(channelName)
+    :   _channelName(channelName), _clientLimit(0)
 { std::cout << "Channel constructor called" << std::endl; }
 
 Channel::~Channel()
@@ -36,6 +36,9 @@ const std::string&  Channel::getPassword() const
 bool    Channel::getChannelMode(ChannelModes mode) const
 { return _modes.getMode(mode); }
 
+size_t  Channel::getClientLimit() const
+{ return (_clientLimit); }
+
 // Setters
 void    Channel::setPassword(const std::string& password)
 { _password = password; }
@@ -45,6 +48,9 @@ void    Channel::setTopic(const std::string& topic)
 
 void    Channel::setChannelMode(ChannelModes mode, bool b)
 { _modes.setMode(mode, b); }
+
+void    Channel::setClientLimit(size_t limit)
+{ _clientLimit = limit; }
 
 // Methodes
 void    Channel::addClient(Client* client)

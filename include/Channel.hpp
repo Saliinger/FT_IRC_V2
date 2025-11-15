@@ -17,6 +17,7 @@ class Channel
 		std::map<int, Client *>		_clientList;
 		std::map<int, Client *>		_operatorList;
 		Modes						_modes;
+		size_t						_clientLimit;
 
 
 	public:
@@ -30,10 +31,12 @@ class Channel
 		const std::string&				getTopic() const;
 		const std::string&				getPassword() const;
 		bool							getChannelMode(ChannelModes mode) const;
+		size_t							getClientLimit() const;
 
 		void							setTopic(const std::string& topic);
 		void							setPassword(const std::string &pass);
 		void							setChannelMode(ChannelModes mode, bool b);
+		void							setClientLimit(size_t limit);
 
 		// Methodes
 		void		addClient(Client* client);
