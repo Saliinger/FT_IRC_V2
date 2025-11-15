@@ -1,8 +1,8 @@
 #include "../../include/Server.hpp"
 
-Server::Server() : _clients(), _channels(), _isRunning(false) {}
+Server::Server() : _clients(), _channels(), _isRunning(false), _commandHandler(new CommandHandler()) {}
 
-Server::Server(const Server &src) : _clients(src._clients), _channels(src._channels), _isRunning(src._isRunning), _sig(src._sig), _commandHandler(src._commandHandler) {}
+Server::Server(const Server &src) : _clients(src._clients), _channels(src._channels), _isRunning(src._isRunning), _sig(src._sig), _commandHandler(new CommandHandler(*src._commandHandler)) {}
 
 Server &Server::operator=(const Server &src)
 {
@@ -16,7 +16,8 @@ Server &Server::operator=(const Server &src)
 		_server_fd = src._server_fd;
 		_isRunning = src._isRunning;
 		_sig = src._sig;
-		_commandHandler = src._commandHandler;
+		delete _commandHandler;
+		_commandHandler = new CommandHandler(*src._commandHandler);
 	}
 	return *this;
 }
@@ -39,9 +40,11 @@ Server::~Server()
 		delete itc->second;
 		itc++;
 	}
+
+	delete _commandHandler;
 }
 
-Server::Server(std::string pass, int port) : _pass(pass), _port(port)
+Server::Server(std::string pass, int port) : _pass(pass), _port(port), _commandHandler(new CommandHandler())
 {
 	_server_fd = socket(AF_INET, SOCK_STREAM, 0); // open a socket for this program
 	if (_server_fd < 0)
@@ -142,4 +145,10 @@ Client *Server::getDeparted(const std::string &name)
 			return *it;
 	}
 	return NULL;
+}
+
+void Server::removeClient(Client &client)
+{
+	std::map<int, Client *>::iterator pos = _clients.find(client.getFd());
+	_clients.erase(pos);
 }

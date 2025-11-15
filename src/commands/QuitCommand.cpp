@@ -1,14 +1,23 @@
 #include "../../include/QuitCommand.hpp"
+#include "../../include/Server.hpp"
+#include "../../include/Client.hpp"
+#include "../../include/Channel.hpp"
+#include <unistd.h>
 
 void QuitCommand::execute(Server &server, Client &client, const std::vector<std::string> &args)
 {
-	client.isAuthenticated(); // logout
+	std::string reason = args.empty() ? "Quit" : args[0];
+	std::string quitMsg = ":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getIpAdress() + " QUIT :" + reason + "\r\n";
+
+	const std::map<std::string, Channel *> &channels = client.getChannelList();
+	for (std::map<std::string, Channel *>::const_iterator itc = channels.begin(); itc != channels.end(); ++itc)
+	{
+		itc->second->sendMessageToClients(client.getFd(), quitMsg);
+	}
+
+	client.sendMessage(quitMsg);
 	close(client.getFd());
 
-	Channel *channels = client.getChannelList();
-	for (std::map<std::string, Channel *>::iterator itc = channels.begin(); it != channels.end(); it++)
-		it->sendMessage(args[0] + "\r\n");
-	
 	// add to departed
 	server.addDeparted(client);
 	server.removeClient(client);

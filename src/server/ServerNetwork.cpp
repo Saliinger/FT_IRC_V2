@@ -90,7 +90,7 @@ void Server::recData(const int &fd)
 		}
 		else
 		{
-			_commandHandler.handleCommand(*this, *target, msg);
+			_commandHandler->handleCommand(*this, *target, msg);
 		}
 	}
 }

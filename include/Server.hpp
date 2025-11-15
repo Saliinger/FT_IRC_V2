@@ -17,6 +17,10 @@
 #include "Error.hpp"
 #include "Utils.hpp"
 
+class CommandHandler;
+class Client;
+class Channel;
+
 class Server
 {
 public:
@@ -58,7 +62,7 @@ private:
 	int _server_fd;
 	bool _isRunning;
 	int _sig;
-	CommandHandler _commandHandler;
+	CommandHandler *_commandHandler;
 
 	std::vector<Client *> _departedClients;
 };

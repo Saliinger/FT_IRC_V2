@@ -14,7 +14,7 @@ bool	isStringNumeric(std::string str)
 
 void ModeCommand::execute(Server &server, Client &client, const std::vector<std::string> &args)
 {
-
+	(void)client;
 	std::string channelName = args[0];
 	std::string mode = args[1];
 
@@ -76,7 +76,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
 				{
 					if (isStringNumeric(*itArgs))
 					{
-						channel->setClientLimit(atol(*itArgs));
+						channel->setClientLimit(atol((*itArgs).c_str()));
 						itArgs++;
 					}
 				}

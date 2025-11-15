@@ -1,7 +1,14 @@
 #include "../../include/PartCommand.hpp"
+#include "../../include/Server.hpp"
+#include "../../include/Client.hpp"
+#include "../../include/Channel.hpp"
 
 void PartCommand::execute(Server &server, Client &client, const std::vector<std::string> &args)
 {
+	(void)server;
+	(void)client;
+	(void)args;
+
 	std::vector<Channel *> channels;
 	std::string msg;
 
@@ -16,16 +23,20 @@ void PartCommand::execute(Server &server, Client &client, const std::vector<std:
 			msg = *it;
 	}
 
-	msg += "\r\n";
+	std::string fullMsg = ":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getIpAdress() + " PART ";
 
 	for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); it++)
 	{
-		(*it)->sendMessage(msg);
+		std::string channelMsg = fullMsg + (*it)->getChannelName();
+		if (!msg.empty())
+			channelMsg += " :" + msg;
+		channelMsg += "\r\n";
+
+		(*it)->sendMessageToClients(-1, channelMsg);
 		client.leaveChannel(*it);
 	}
 
 	// quit each specified channel
-
 }
 
 // leave one or more channel + whith or whithout a reason

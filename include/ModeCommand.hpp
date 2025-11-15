@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include <fcntl.h>
+#include <cstdlib>
 
 #include "Command.hpp"
 
