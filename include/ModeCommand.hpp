@@ -4,7 +4,6 @@
 #include <fcntl.h>
 
 #include "Command.hpp"
-#include "Client.hpp"
 
 class ModeCommand : public Command
 {
