@@ -2,8 +2,6 @@
 
 void PartCommand::execute(Server &server, Client &client, const std::vector<std::string> &args)
 {
-	(void)client;
-
 	std::vector<Channel *> channels;
 	std::string msg;
 
@@ -22,11 +20,12 @@ void PartCommand::execute(Server &server, Client &client, const std::vector<std:
 
 	for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); it++)
 	{
-
 		(*it)->sendMessage(msg);
+		client.leaveChannel(*it);
 	}
 
 	// quit each specified channel
+
 }
 
 // leave one or more channel + whith or whithout a reason
