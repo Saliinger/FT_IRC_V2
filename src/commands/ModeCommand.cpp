@@ -50,6 +50,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
 					channel->setPassword(*itArgs);
 					itArgs++;
 				}
+				// no pass provided error
 			}
 			else
 				channel->setPassword("");
@@ -66,6 +67,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
 					else
 						channel->removeOperator(target);
 				}
+				// no target error
 				itArgs++;
 			}
 			break;
@@ -80,6 +82,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
 						itArgs++;
 					}
 				}
+				// no limit set error
 			}
 			else
 				channel->setClientLimit(0);
@@ -88,6 +91,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
 
 		default:
 			std::cout << "doesn't exist" << std::endl;
+			// mode doesn't exist error
 			break;
 		}
 	}

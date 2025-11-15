@@ -42,3 +42,7 @@ void PrivmsgCommand::execute(Server &server, Client &client, const std::vector<s
 }
 
 // check si # -> channel sinon nickname
+
+
+// if channel add @ if target is op
+
