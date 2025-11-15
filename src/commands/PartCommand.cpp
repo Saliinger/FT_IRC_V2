@@ -25,6 +25,8 @@ void PartCommand::execute(Server &server, Client &client, const std::vector<std:
 
 		(*it)->sendMessage(msg);
 	}
+
+	// quit each specified channel
 }
 
 // leave one or more channel + whith or whithout a reason
