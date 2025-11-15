@@ -14,7 +14,7 @@ bool	isStringNumeric(std::string str)
 
 void ModeCommand::execute(Server &server, Client &client, const std::vector<std::string> &args)
 {
-	(void)client;
+	(void)client; // check if operator 
 	std::string channelName = args[0];
 	std::string mode = args[1];
 

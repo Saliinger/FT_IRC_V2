@@ -12,6 +12,7 @@
 #include "../../include/PrivmsgCommand.hpp"
 #include "../../include/QuitCommand.hpp"
 #include "../../include/PartCommand.hpp"
+#include "../../include/TopicCommand.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -29,6 +30,7 @@ CommandHandler::CommandHandler()
 	_commands["PRIVMSG"] = new PrivmsgCommand();
 	_commands["QUIT"] = new QuitCommand();
 	_commands["PART"] = new PartCommand();
+	_commands["TOPIC"] = new TopicCommand();
 }
 
 CommandHandler::~CommandHandler()

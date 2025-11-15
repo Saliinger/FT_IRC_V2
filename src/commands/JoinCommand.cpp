@@ -73,3 +73,6 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
 	client.sendMessage(":localhost 366 " + client.getNickname() + " " + channelName + " :End of /NAMES list\r\n");
 	channel->sendMessageToClients(client.getFd(), ":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getIpAdress() + " JOIN :" + channelName + "\r\n");
 }
+
+
+// check channel settings like i only or client limit and password
