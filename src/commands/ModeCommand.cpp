@@ -6,8 +6,11 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
 	std::string channelName = args[0];
 	std::string mode = args[1];
 
+	Channel *channel = server.getChannel(channelName);
+
 	bool action;
-	for (std::string::iterator it = mode.begin(); it != mode.end; it++)
+	size_t modeParameter = 2;
+	for (std::string::iterator it = mode.begin(); it != mode.end(); it++)
 	{
 		switch (*it)
 		{
@@ -35,9 +38,5 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
 			std::cout << "doesn't exist" << std::endl;
 			break;
 		}
-	}
-
-	for (std::vector<std::string>::const_iterator it = args.begin() + 2; it != args.end(); it++)
-	{
 	}
 }
