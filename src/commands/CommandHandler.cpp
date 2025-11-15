@@ -11,6 +11,7 @@
 #include "../../include/InviteCommand.hpp"
 #include "../../include/PrivmsgCommand.hpp"
 #include "../../include/QuitCommand.hpp"
+#include "../../include/PartCommand.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -27,6 +28,7 @@ CommandHandler::CommandHandler()
     _commands["INVITE"] = new InviteCommand();
 	_commands["PRIVMSG"] = new PrivmsgCommand();
 	_commands["QUIT"] = new QuitCommand();
+	_commands["PART"] = new PartCommand();
 }
 
 CommandHandler::~CommandHandler()
