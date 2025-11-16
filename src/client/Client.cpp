@@ -5,7 +5,9 @@
 #include <iostream>
 #include <string>
 
-// Constructor & Destructor
+//########################################
+// Constructor & Destructor             //
+//########################################
 Client::Client(int fd)
     :   _fd(fd),
         _isAuth(false),
@@ -15,7 +17,9 @@ Client::Client(int fd)
 Client::~Client()
 { std::cout << "Client destructor called" << std::endl; }
 
-// Getters
+//####################
+// Getters          //
+//####################
 int Client::getFd() const
 { return (_fd); }
 
@@ -25,29 +29,33 @@ bool Client::isAuthenticated() const
 bool Client::isRegistered() const
 { return (_isRegistered); }
 
-const std::string&  Client::getNickname() const
+const std::string   &Client::getNickname() const
 { return (_nickname); }
 
-const std::string&  Client::getUsername() const
+const std::string   &Client::getUsername() const
 { return (_username); }
 
-const std::string&  Client::getIpAdress() const
+const std::string   &Client::getIpAdress() const
 { return (_ipAdress); }
 
-const std::map<std::string, Channel *>& Client::getChannelList() const
+const std::map<std::string, Channel *>  &Client::getChannelList() const
 { return (_channelList); }
 
-// Setters
-void    Client::setNickname(const std::string& nickname)
+//####################
+// Setters          //
+//####################
+void    Client::setNickname(const std::string &nickname)
 { _nickname = nickname; }
 
-void    Client::setUsername(const std::string& username)
+void    Client::setUsername(const std::string &username)
 { _username = username; }
 
-void    Client::setIpAdress(const std::string& ipAdress)
+void    Client::setIpAdress(const std::string &ipAdress)
 { _ipAdress = ipAdress; }
 
-//Methodes
+//####################
+//Methodes          //
+//####################
 void    Client::authenticate()
 { _isAuth = true; }
 
@@ -57,7 +65,7 @@ void    Client::unAuthenticate()
 void    Client::registerClient()
 { _isRegistered = true; }
 
-void    Client::appendToRecvBuffer(const std::string& data)
+void    Client::appendToRecvBuffer(const std::string &data)
 { _recvBuffer += data; }
 
 bool    Client::hasCompleteMessage()
@@ -73,19 +81,19 @@ std::string Client::extractMessage()
     return (message);
 }
 
-void    Client::joinChannel(Channel* channel)
+void    Client::joinChannel(Channel *channel)
 {
     std::cout << "Client: " << _username << " joined channel: " << channel->getChannelName() << std::endl;
     _channelList[channel->getChannelName()] = channel;
     channel->addClient(this);
 }
 
-void    Client::leaveChannel(Channel* channel)
+void    Client::leaveChannel(Channel *channel)
 {
     std::cout << "Client: " << _username << " left channel: " << channel->getChannelName() << std::endl;
     _channelList.erase(channel->getChannelName());
     channel->removeClient(this);
 }
 
-void    Client::sendMessage(const std::string& message)
+void    Client::sendMessage(const std::string &message)
 { sendToClient(_fd, message); }

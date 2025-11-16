@@ -11,13 +11,13 @@ class Client;
 class Channel
 {
 	private:
-		std::string					_channelName;
-		std::string					_topic;
-		std::string					_password;
-		std::map<int, Client *>		_clientList;
-		std::map<int, Client *>		_operatorList;
-		Modes						_modes;
-		size_t						_clientLimit;
+		std::string						_channelName;
+		std::string						_topic;
+		std::string						_password;
+		std::map<int, Client *>			_clientList;
+		std::map<int, Client *>			_operatorList;
+		Modes							_modes;
+		size_t							_clientLimit;
 
 
 	public:
@@ -26,23 +26,24 @@ class Channel
 
 		// Getters & Setters
 		std::string						getChannelName() const;
-		const std::map<int, Client *>&	getClients() const;
-		const std::map<int, Client *>&	getOperators() const;
-		const std::string&				getTopic() const;
-		const std::string&				getPassword() const;
+		const std::map<int, Client *>	&getClients() const;
+		const std::map<int, Client *>	&getOperators() const;
+		const std::string				&getTopic() const;
+		const std::string				&getPassword() const;
 		bool							getChannelMode(ChannelModes mode) const;
 		size_t							getClientLimit() const;
 
-		void							setTopic(const std::string& topic);
+		void							setTopic(const std::string &topic);
 		void							setPassword(const std::string &pass);
 		void							setChannelMode(ChannelModes mode, bool b);
 		void							setClientLimit(size_t limit);
 
 		// Methodes
-		void		addClient(Client* client);
-		void		removeClient(Client* client);
-		bool		setOperator(Client* client);
-		bool		removeOperator(Client* client);
-		bool 		isOperator(Client* client) const;
-		void		sendMessageToClients(int fd, const std::string& message);
+		bool							addClient(Client *client);
+		void							removeClient(Client *client);
+		bool							setOperator(Client *client);
+		bool							removeOperator(Client *client);
+		bool 							isOperator(Client *client) const;
+		bool							isClient(Client *client) const;
+		void							sendMessageToClients(int fd, const std::string &message);
 };

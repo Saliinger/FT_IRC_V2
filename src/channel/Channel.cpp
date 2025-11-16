@@ -9,28 +9,33 @@
 #include <iostream>
 #include <algorithm>
 
-// Constructor & Destructor
+//########################################
+// Constructor & Destructor             //
+//########################################
 Channel::Channel(std::string channelName)
-    :   _channelName(channelName), _clientLimit(0)
+    :   _channelName(channelName),
+        _clientLimit(0)
 { std::cout << "Channel constructor called" << std::endl; }
 
 Channel::~Channel()
 { std::cout << "Channel destructor called" << std::endl; }
 
-// Getters
+//####################
+// Getters          //
+//####################
 std::string Channel::getChannelName() const
 { return (_channelName); }
 
-const std::map<int, Client *>& Channel::getClients() const
+const std::map<int, Client *>   &Channel::getClients() const
 { return (_clientList); }
 
-const std::map<int, Client *>& Channel::getOperators() const
+const std::map<int, Client *>   &Channel::getOperators() const
 { return (_operatorList); }
 
-const std::string&  Channel::getTopic() const
+const std::string   &Channel::getTopic() const
 { return (_topic); }
 
-const std::string&  Channel::getPassword() const
+const std::string   &Channel::getPassword() const
 { return (_password); }
 
 bool    Channel::getChannelMode(ChannelModes mode) const
@@ -39,11 +44,13 @@ bool    Channel::getChannelMode(ChannelModes mode) const
 size_t  Channel::getClientLimit() const
 { return (_clientLimit); }
 
-// Setters
-void    Channel::setPassword(const std::string& password)
+//####################
+// Setters          //
+//####################
+void    Channel::setPassword(const std::string &password)
 { _password = password; }
 
-void    Channel::setTopic(const std::string& topic)
+void    Channel::setTopic(const std::string &topic)
 { _topic = topic; }
 
 void    Channel::setChannelMode(ChannelModes mode, bool b)
@@ -52,18 +59,27 @@ void    Channel::setChannelMode(ChannelModes mode, bool b)
 void    Channel::setClientLimit(size_t limit)
 { _clientLimit = limit; }
 
-// Methodes
-void    Channel::addClient(Client* client)
-{ _clientList[client->getFd()] = client; }
+//####################
+// Methodes         //
+//####################
+bool    Channel::addClient(Client *client)
+{
+    if (getChannelMode(MODE_L)
+        && _clientLimit > 0
+        && _clientList.size() >= _clientLimit)
+        return (false);
+    _clientList[client->getFd()] = client;
+    return (true);
+}
 
-void    Channel::removeClient(Client* client)
+void    Channel::removeClient(Client *client)
 { 
     if (isOperator(client))
         removeOperator(client);
     _clientList.erase(client->getFd()); 
 }
 
-bool    Channel::setOperator(Client* client)
+bool    Channel::setOperator(Client *client)
 {
     if (_clientList.find(client->getFd()) != _clientList.end())
     {
@@ -73,7 +89,7 @@ bool    Channel::setOperator(Client* client)
     return (false);
 }
 
-bool    Channel::removeOperator(Client* client)
+bool    Channel::removeOperator(Client *client)
 {
     if (_operatorList.find(client->getFd()) != _operatorList.end())
     {
@@ -83,12 +99,19 @@ bool    Channel::removeOperator(Client* client)
     return (false);
 }
 
-bool    Channel::isOperator(Client* client) const
+bool    Channel::isOperator(Client *client) const
 { 
     if (_operatorList.find(client->getFd()) != _operatorList.end())
         return (true);
     return (false);
-} 
+}
+
+bool    Channel::isClient(Client *client) const
+{
+    if (_clientList.find(client->getFd()) != _clientList.end())
+        return (true);
+    return (false);
+}
 
 void    Channel::sendMessageToClients(int fd, const std::string& message)
 {
