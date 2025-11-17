@@ -2,7 +2,7 @@
 
 void TopicCommand::execute(Server &server, Client &client, const std::vector<std::string> &args)
 {
-	if (args.size() == 1)
+	if (args.empty())
 	{
 		client.sendMessage(formatError(ERR_NEEDMOREPARAMS, client.getNickname(), "", "not enough parameters"));
 		return;
@@ -16,25 +16,28 @@ void TopicCommand::execute(Server &server, Client &client, const std::vector<std
 	}
 
 	std::vector<std::string>::const_iterator it = args.begin();
-	Channel *channel = server.getChannel(*it);
 
-	if (!channel)
+	if (!server.channelExist(*it))
 	{
-		client.sendMessage(formatError(ERR_NOSUCHCHANNEL, client.getNickname(), channel->getChannelName(), "channel doesn't exist"));
+		client.sendMessage(formatError(ERR_NOSUCHCHANNEL, client.getNickname(), *it, "channel doesn't exist"));
 		return;
 	}
+	Channel *channel = server.getChannel(*it);
 
-	// if (channel->)
-	// client.sendMessage(formatError(ERR_NOTONCHANNEL, client.getNickname(), channel->getChannelName(), "not part of the channel"));
+	if (!channel->isClient(&client))
+	{
+		client.sendMessage(formatError(ERR_NOTONCHANNEL, client.getNickname(), channel->getChannelName(), "not part of the channel"));
+		return;
+	}
 
 	it++;
 	if (it == args.end())
 	{
 		std::string topic = channel->getTopic();
 		if (topic.empty())
-			client.sendMessage("no topic");
+			client.sendMessage(formatReply(RPL_NOTOPIC, client.getNickname(),  " :No topic is set\r\n"));
 		else
-			client.sendMessage(topic);
+			client.sendMessage(formatReply(RPL_TOPIC, client.getNickname(), " :" + topic + "\r\n"));
 		return;
 	}
 

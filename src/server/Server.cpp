@@ -152,3 +152,10 @@ void Server::removeClient(Client &client)
 	std::map<int, Client *>::iterator pos = _clients.find(client.getFd());
 	_clients.erase(pos);
 }
+
+bool Server::channelExist(const std::string &name)
+{
+	if (_channels[name])
+		return true;
+	return false;
+}

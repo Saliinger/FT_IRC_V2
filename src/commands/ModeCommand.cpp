@@ -14,11 +14,23 @@ bool	isStringNumeric(std::string str)
 
 void ModeCommand::execute(Server &server, Client &client, const std::vector<std::string> &args)
 {
-	(void)client; // check if operator 
+	if (client.isRegistered())
+		std::cout << "not registered" << std::endl;
+
+	if (args.size() < 2)
+		std::cout << "not enough parameters" << std::endl;
+
+
 	std::string channelName = args[0];
 	std::string mode = args[1];
 
 	Channel *channel = server.getChannel(channelName);
+
+	if (!channel)
+		std::cout << "channel doesn't exist" << std::endl;
+
+	if (channel->isClient(&client))
+		std::cout << "nor op"<< std::endl;
 
 	bool action = true;
 	std::vector<std::string>::const_iterator itArgs = args.begin() + 2;
