@@ -34,17 +34,27 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
     Channel *channel = server.getChannel(channelName);
     if (channel)
     {
-        // Channel exists, check restrictions
-        if (channel->getChannelMode(MODE_I))
-        {
-            client.sendMessage(
-                formatError(ERR_INVITEONLYCHAN, client.getNickname(), channelName, "Cannot join channel (+i)"));
-            return;
-        }
         if (!channel->getPassword().empty() && channel->getPassword() != channelKey)
         {
             client.sendMessage(
                 formatError(ERR_BADCHANNELKEY, client.getNickname(), channelName, "Cannot join channel (+k)"));
+            return;
+        }
+        // Channel exists, check restrictions
+        if (channel->getChannelMode(MODE_I))
+        {
+            if (channel->isInvited(&client))
+            {
+                if (!client.joinChannel(channel))
+                {
+                    client.sendMessage(
+                        formatError(ERR_CHANNELISFULL, client.getNickname(), channelName, "Cannot join channel (+l)"));
+                    return;
+                }
+                channel->removeFromInviteList(&client);
+            }
+            client.sendMessage(
+                formatError(ERR_INVITEONLYCHAN, client.getNickname(), channelName, "Cannot join channel (+i)"));
             return;
         }
     }

@@ -37,16 +37,7 @@ void InviteCommand::execute(Server &server, Client &client, const std::vector<st
         return;
     }
 
-    Client *targetClient = NULL;
-
-    for (std::map<int, Client *>::const_iterator clientIt = clients.begin(); clientIt != clients.end(); ++clientIt)
-    {
-        if (clientIt->second->getNickname() == targetNick)
-        {
-            targetClient = clientIt->second;
-            break;
-        }
-    }
+    Client *targetClient = server.getClient(targetNick);
 
     if (!targetClient)
     {
@@ -54,13 +45,14 @@ void InviteCommand::execute(Server &server, Client &client, const std::vector<st
         return;
     }
 
-    if (clients.find(targetClient->getFd()) != clients.end())
+    if (channel->isClient(targetClient))
     {
         client.sendMessage(":ft_irc 443 " + client.getNickname() + " " + targetNick + " " + channelName +
                            " :is already on channel\r\n");
         return;
     }
 
+	channel->addToInviteList(targetClient);
     targetClient->sendMessage(":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getIpAdress() +
                               " INVITE " + targetNick + " :" + channelName + "\r\n");
     client.sendMessage(":ft_irc 341 " + client.getNickname() + " " + targetNick + " " + channelName + "\r\n");
