@@ -22,7 +22,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         return;
     }
 
-    if (args.size() < 2 || args.empty())
+    if (args.empty())
     {
         client.sendMessage(formatError(ERR_NEEDMOREPARAMS, client.getNickname(), "MODE", "Not enough parameters"));
         return;
@@ -48,6 +48,32 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
     if (!channel->isOperator(&client))
     {
         client.sendMessage(formatError(ERR_CHANOPRIVSNEEDED, client.getNickname(), channelName, "need to be operator"));
+        return;
+    }
+
+    if (args.size() == 1)
+    {
+        // If only channel name provided (args.size() == 1)
+        // Should send: RPL_CHANNELMODEIS (324)
+        // Format: ":server 324 nick #channel +itkl 50 password"
+		std::string mode("+");
+		if (channel->getChannelMode(MODE_I))
+			mode += "i";
+		if (channel->getChannelMode(MODE_T))
+			mode += "t";
+		if (channel->getChannelMode(MODE_K))
+			mode += "k";
+		if (channel->getChannelMode(MODE_O))
+			mode += "o";
+		if (channel->getChannelMode(MODE_L))
+			mode += "l";
+
+		if (channel->getChannelMode(MODE_K))
+			mode += " " + channel->getPassword();
+		if (channel->getChannelMode(MODE_L))
+			mode += " " + channel->getClientLimit();
+		
+        client.sendMessage(formatReply(RPL_CHANNELMODEIS, "-!-", mode));
         return;
     }
 

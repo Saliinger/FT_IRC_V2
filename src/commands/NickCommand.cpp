@@ -27,6 +27,12 @@ void NickCommand::execute(Server &server, Client &client, const std::vector<std:
     std::string clientName = client.getNickname();
     std::string targetName = clientName.empty() ? "*" : clientName;
 
+    if (!client.isAuthenticated())
+    {
+        client.sendMessage(formatError(ERR_NOTREGISTERED, client.getNickname().empty() ? "*" : client.getNickname(), "",
+                                       "You have not registered"));
+        return;
+    }
     if (args.empty())
     {
         client.sendMessage(formatError(ERR_NEEDMOREPARAMS, targetName, "NICK", "Not enough parameters") + "\r\n");
