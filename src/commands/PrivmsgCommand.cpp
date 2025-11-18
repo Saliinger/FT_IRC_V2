@@ -19,7 +19,7 @@ void PrivmsgCommand::execute(Server &server, Client &client, const std::vector<s
 
     if (args.size() < 2)
     {
-        client.sendMessage(":localhost 461 " + client.getNickname() + " PRIVMSG :Not enough parameters\r\n");
+        client.sendMessage(":ft_irc 461 " + client.getNickname() + " PRIVMSG :Not enough parameters\r\n");
         return;
     }
 
@@ -33,7 +33,7 @@ void PrivmsgCommand::execute(Server &server, Client &client, const std::vector<s
         Channel *target = server.getChannel(target_name);
         if (!target)
         {
-            client.sendMessage(":localhost 403 " + client.getNickname() + " " + target_name + " :No such channel\r\n");
+            client.sendMessage(":ft_irc 403 " + client.getNickname() + " " + target_name + " :No such channel\r\n");
             return;
         }
         target->sendMessageToClients(client.getFd(), fullMsg);
@@ -43,7 +43,7 @@ void PrivmsgCommand::execute(Server &server, Client &client, const std::vector<s
         Client *target = server.getClient(target_name);
         if (!target)
         {
-            client.sendMessage(":localhost 401 " + client.getNickname() + " " + target_name +
+            client.sendMessage(":ft_irc 401 " + client.getNickname() + " " + target_name +
                                " :No such nick/channel\r\n");
             return;
         }

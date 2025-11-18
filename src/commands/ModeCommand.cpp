@@ -56,23 +56,23 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         // If only channel name provided (args.size() == 1)
         // Should send: RPL_CHANNELMODEIS (324)
         // Format: ":server 324 nick #channel +itkl 50 password"
-		std::string mode("+");
-		if (channel->getChannelMode(MODE_I))
-			mode += "i";
-		if (channel->getChannelMode(MODE_T))
-			mode += "t";
-		if (channel->getChannelMode(MODE_K))
-			mode += "k";
-		if (channel->getChannelMode(MODE_O))
-			mode += "o";
-		if (channel->getChannelMode(MODE_L))
-			mode += "l";
+        std::string mode("+");
+        if (channel->getChannelMode(MODE_I))
+            mode += "i";
+        if (channel->getChannelMode(MODE_T))
+            mode += "t";
+        if (channel->getChannelMode(MODE_K))
+            mode += "k";
+        if (channel->getChannelMode(MODE_O))
+            mode += "o";
+        if (channel->getChannelMode(MODE_L))
+            mode += "l";
 
-		if (channel->getChannelMode(MODE_K))
-			mode += " " + channel->getPassword();
-		if (channel->getChannelMode(MODE_L))
-			mode += " " + channel->getClientLimit();
-		
+        if (channel->getChannelMode(MODE_K))
+            mode += " " + channel->getPassword();
+        if (channel->getChannelMode(MODE_L))
+            mode += " " + channel->getClientLimit();
+
         client.sendMessage(formatReply(RPL_CHANNELMODEIS, "-!-", mode));
         return;
     }
@@ -96,7 +96,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         case 'i':
             channel->setChannelMode(MODE_I, action);
             {
-                std::string modeChange = ":" + client.getNickname() + "!~" + client.getUsername() + "@localhost MODE " +
+                std::string modeChange = ":" + client.getNickname() + "!~" + client.getUsername() + "@ft_irc MODE " +
                                          channelName + " " + (action ? "+" : "-") + "i\r\n";
                 channel->sendMessageToClients(-1, modeChange);
             }
@@ -104,7 +104,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         case 't':
             channel->setChannelMode(MODE_T, action);
             {
-                std::string modeChange = ":" + client.getNickname() + "!~" + client.getUsername() + "@localhost MODE " +
+                std::string modeChange = ":" + client.getNickname() + "!~" + client.getUsername() + "@ft_irc MODE " +
                                          channelName + " " + (action ? "+" : "-") + "t\r\n";
                 channel->sendMessageToClients(-1, modeChange);
             }
@@ -118,7 +118,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
                     channel->setChannelMode(MODE_K, action);
                     {
                         std::string modeChange = ":" + client.getNickname() + "!~" + client.getUsername() +
-                                                 "@localhost MODE " + channelName + " +k " + *itArgs + "\r\n";
+                                                 "@ft_irc MODE " + channelName + " +k " + *itArgs + "\r\n";
                         channel->sendMessageToClients(-1, modeChange);
                     }
                     itArgs++;
@@ -135,7 +135,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
                 channel->setChannelMode(MODE_K, action);
                 {
                     std::string modeChange = ":" + client.getNickname() + "!~" + client.getUsername() +
-                                             "@localhost MODE " + channelName + " -k\r\n";
+                                             "@ft_irc MODE " + channelName + " -k\r\n";
                     channel->sendMessageToClients(-1, modeChange);
                 }
             }
@@ -163,7 +163,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
 
                     // Broadcast mode change to all channel members
                     std::string modeChange = ":" + client.getNickname() + "!~" + client.getUsername() +
-                                             "@localhost MODE " + channelName + " " + (action ? "+" : "-") + "o " +
+                                             "@ft_irc MODE " + channelName + " " + (action ? "+" : "-") + "o " +
                                              target->getNickname() + "\r\n";
                     channel->sendMessageToClients(-1, modeChange);
                 }
@@ -189,7 +189,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
                             channel->setChannelMode(MODE_L, action);
                             {
                                 std::string modeChange = ":" + client.getNickname() + "!~" + client.getUsername() +
-                                                         "@localhost MODE " + channelName + " +l " + *itArgs + "\r\n";
+                                                         "@ft_irc MODE " + channelName + " +l " + *itArgs + "\r\n";
                                 channel->sendMessageToClients(-1, modeChange);
                             }
                         }
@@ -208,14 +208,14 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
                 channel->setChannelMode(MODE_L, action);
                 {
                     std::string modeChange = ":" + client.getNickname() + "!~" + client.getUsername() +
-                                             "@localhost MODE " + channelName + " -l\r\n";
+                                             "@ft_irc MODE " + channelName + " -l\r\n";
                     channel->sendMessageToClients(-1, modeChange);
                 }
             }
             break;
 
         default:
-            client.sendMessage(":localhost 472 " + client.getNickname() + " " + std::string(1, *it) +
+            client.sendMessage(":ft_irc 472 " + client.getNickname() + " " + std::string(1, *it) +
                                " :is unknown mode char to me\r\n");
             break;
         }

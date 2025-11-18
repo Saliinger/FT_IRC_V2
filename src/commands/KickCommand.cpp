@@ -9,13 +9,13 @@ void KickCommand::execute(Server &server, Client &client, const std::vector<std:
 {
     if (!client.isRegistered())
     {
-        client.sendMessage(":localhost 451 * :You have not registered\r\n");
+        client.sendMessage(":ft_irc 451 * :You have not registered\r\n");
         return;
     }
 
     if (args.size() < 2)
     {
-        client.sendMessage(":localhost 461 " + client.getNickname() + " KICK :Not enough parameters\r\n");
+        client.sendMessage(":ft_irc 461 " + client.getNickname() + " KICK :Not enough parameters\r\n");
         return;
     }
 
@@ -34,14 +34,14 @@ void KickCommand::execute(Server &server, Client &client, const std::vector<std:
 
     if (clients.find(client.getFd()) == clients.end())
     {
-        client.sendMessage(":localhost 442 " + client.getNickname() + " " + channelName +
+        client.sendMessage(":ft_irc 442 " + client.getNickname() + " " + channelName +
                            " :You're not on that channel\r\n");
         return;
     }
 
     if (!channel->isOperator(&client))
     {
-        client.sendMessage(":localhost 482 " + client.getNickname() + " " + channelName +
+        client.sendMessage(":ft_irc 482 " + client.getNickname() + " " + channelName +
                            " :You're not channel operator\r\n");
         return;
     }
@@ -58,7 +58,7 @@ void KickCommand::execute(Server &server, Client &client, const std::vector<std:
 
     if (!targetClient)
     {
-        client.sendMessage(":localhost 441 " + client.getNickname() + " " + targetNick + " " + channelName +
+        client.sendMessage(":ft_irc 441 " + client.getNickname() + " " + targetNick + " " + channelName +
                            " :They aren't on that channel\r\n");
         return;
     }
