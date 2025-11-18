@@ -23,6 +23,7 @@ SOURCES =	$(SRCDIR)/main.cpp \
 			$(SRCDIR)/commands/PrivmsgCommand.cpp \
 			$(SRCDIR)/commands/PartCommand.cpp \
 			$(SRCDIR)/commands/QuitCommand.cpp \
+			$(SRCDIR)/commands/TopicCommand.cpp \
 			$(SRCDIR)/commands/ModeCommand.cpp \
 			$(SRCDIR)/commands/KickCommand.cpp \
 			$(SRCDIR)/commands/InviteCommand.cpp \

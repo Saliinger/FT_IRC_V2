@@ -2,47 +2,55 @@
 
 static int getType(const std::string &to_check)
 {
-	if (!to_check.empty() && to_check[0] == '#')
-		return 1;
-	return 0;
+    if (!to_check.empty() && to_check[0] == '#')
+        return 1;
+    return 0;
 }
 
 void PrivmsgCommand::execute(Server &server, Client &client, const std::vector<std::string> &args)
 {
-	if (args.size() < 2)
-	{
-		client.sendMessage(":localhost 461 " + client.getNickname() + " PRIVMSG :Not enough parameters\r\n");
-		return;
-	}
+    std::string clientName = client.getNickname();
+    if (!client.isRegistered())
+    {
+        client.sendMessage(
+            formatError(ERR_NOTREGISTERED, clientName.empty() ? "*" : clientName, "", "you're not registered"));
+        return;
+    }
 
-	std::string target_name = args[0];
-	std::string msg = args[1];
-	std::string fullMsg = ":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getIpAdress() + " PRIVMSG " + target_name + " :" + msg + "\r\n";
+    if (args.size() < 2)
+    {
+        client.sendMessage(":localhost 461 " + client.getNickname() + " PRIVMSG :Not enough parameters\r\n");
+        return;
+    }
 
-	if (getType(target_name)) // type 1 channel
-	{
-		Channel *target = server.getChannel(target_name);
-		if (!target)
-		{
-			client.sendMessage(":localhost 403 " + client.getNickname() + " " + target_name + " :No such channel\r\n");
-			return;
-		}
-		target->sendMessageToClients(client.getFd(), fullMsg);
-	}
-	else // autre type msg vers nickname
-	{
-		Client *target = server.getClient(target_name);
-		if (!target)
-		{
-			client.sendMessage(":localhost 401 " + client.getNickname() + " " + target_name + " :No such nick/channel\r\n");
-			return;
-		}
-		target->sendMessage(fullMsg);
-	}
+    std::string target_name = args[0];
+    std::string msg = args[1];
+    std::string fullMsg = ":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getIpAdress() +
+                          " PRIVMSG " + target_name + " :" + msg + "\r\n";
+
+    if (getType(target_name)) // type 1 channel
+    {
+        Channel *target = server.getChannel(target_name);
+        if (!target)
+        {
+            client.sendMessage(":localhost 403 " + client.getNickname() + " " + target_name + " :No such channel\r\n");
+            return;
+        }
+        target->sendMessageToClients(client.getFd(), fullMsg);
+    }
+    else // autre type msg vers nickname
+    {
+        Client *target = server.getClient(target_name);
+        if (!target)
+        {
+            client.sendMessage(":localhost 401 " + client.getNickname() + " " + target_name +
+                               " :No such nick/channel\r\n");
+            return;
+        }
+        target->sendMessage(fullMsg);
+    }
 }
 
 // check si # -> channel sinon nickname
 
-
 // if channel add @ if target is op
-

@@ -1,42 +1,63 @@
 #include "../../include/PartCommand.hpp"
-#include "../../include/Server.hpp"
-#include "../../include/Client.hpp"
 #include "../../include/Channel.hpp"
+#include "../../include/Client.hpp"
+#include "../../include/Server.hpp"
 
 void PartCommand::execute(Server &server, Client &client, const std::vector<std::string> &args)
 {
-	(void)server;
-	(void)client;
-	(void)args;
+    std::string clientName = client.getNickname();
+    if (!client.isRegistered())
+    {
+        client.sendMessage(
+            formatError(ERR_NOTREGISTERED, clientName.empty() ? "*" : clientName, "", "you're not registered"));
+        return;
+    }
 
-	std::vector<Channel *> channels;
-	std::string msg;
+    if (args.empty())
+    {
+        client.sendMessage(formatError(ERR_NEEDMOREPARAMS, client.getNickname(), "PART", "Not enough parameters"));
+        return;
+    }
 
-	for (std::vector<std::string>::const_iterator it = args.begin(); it != args.end(); it++)
-	{
-		if ((*it)[0] == '#')
-		{
-			Channel *to_add = server.getChannel(*it);
-			channels.push_back(to_add);
-		}
-		else
-			msg = *it;
-	}
+    std::vector<Channel *> channels;
+    std::string msg;
 
-	std::string fullMsg = ":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getIpAdress() + " PART ";
+    for (std::vector<std::string>::const_iterator it = args.begin(); it != args.end(); it++)
+    {
+        if ((*it)[0] == '#')
+        {
+            Channel *to_add = server.getChannel(*it);
+            if (!to_add)
+            {
+                client.sendMessage(formatError(ERR_NOSUCHCHANNEL, client.getNickname(), *it, "channel doesn't exist"));
+                continue;
+            }
+            if (!to_add->isClient(&client))
+            {
+                client.sendMessage(formatError(ERR_NOTONCHANNEL, client.getNickname(), *it, "not part of the channel"));
+                continue;
+            }
+            channels.push_back(to_add);
+        }
+        else
+            msg = *it;
+    }
 
-	for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); it++)
-	{
-		std::string channelMsg = fullMsg + (*it)->getChannelName();
-		if (!msg.empty())
-			channelMsg += " :" + msg;
-		channelMsg += "\r\n";
+    std::string fullMsg =
+        ":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getIpAdress() + " PART ";
 
-		(*it)->sendMessageToClients(-1, channelMsg);
-		client.leaveChannel(*it);
-	}
+    for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); it++)
+    {
+        std::string channelMsg = fullMsg + (*it)->getChannelName();
+        if (!msg.empty())
+            channelMsg += " :" + msg;
+        channelMsg += "\r\n";
 
-	// quit each specified channel
+        (*it)->sendMessageToClients(-1, channelMsg);
+        client.leaveChannel(*it);
+    }
+
+    // quit each specified channel
 }
 
 // leave one or more channel + whith or whithout a reason
