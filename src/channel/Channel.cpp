@@ -123,3 +123,22 @@ void    Channel::sendMessageToClients(int fd, const std::string& message)
         it++;
     }
 }
+
+void    Channel::addToInviteList(Client *client)
+{
+    if (!isInvited(client))
+        _inviteList.push_back(client);
+}
+
+void    Channel::removeFromInviteList(Client *client)
+{ _inviteList.remove(client); }
+
+void    Channel::clearList()
+{ _inviteList.clear(); }
+
+bool    Channel::isInvited(Client *client) const
+{
+    if (std::find(_inviteList.begin(), _inviteList.end(), client) != _inviteList.end())
+        return (true);
+    return (false);
+}

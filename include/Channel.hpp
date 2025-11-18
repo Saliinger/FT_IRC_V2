@@ -16,6 +16,7 @@ class Channel
 		std::string						_password;
 		std::map<int, Client *>			_clientList;
 		std::map<int, Client *>			_operatorList;
+		std::list<Client *>				_inviteList;
 		Modes							_modes;
 		size_t							_clientLimit;
 
@@ -46,4 +47,8 @@ class Channel
 		bool 							isOperator(Client *client) const;
 		bool							isClient(Client *client) const;
 		void							sendMessageToClients(int fd, const std::string &message);
+		void							addToInviteList(Client *client);
+		void							removeFromInviteList(Client *client);
+		void							clearList();
+		bool							isInvited(Client *client) const;
 };
