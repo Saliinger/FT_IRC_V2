@@ -31,14 +31,9 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
         return;
     }
 
-    std::map<std::string, Channel *> channels = server.getChannels();
-    Channel *channel = NULL;
-
-    std::map<std::string, Channel *>::iterator it = channels.find(channelName);
-    if (it != channels.end())
+    Channel *channel = server.getChannel(channelName);
+    if (!channel)
     {
-        channel = it->second;
-
         if (channel->getChannelMode(MODE_I))
         {
             client.sendMessage(
@@ -68,9 +63,7 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
 
     // Make first user operator when creating new channel
     if (channel->getClients().size() == 1)
-    {
         channel->setOperator(&client);
-    }
 
     client.sendMessage(":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getIpAdress() +
                        " JOIN :" + channelName + "\r\n");
