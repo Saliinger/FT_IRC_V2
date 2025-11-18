@@ -32,8 +32,9 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
     }
 
     Channel *channel = server.getChannel(channelName);
-    if (!channel)
+    if (channel)
     {
+        // Channel exists, check restrictions
         if (channel->getChannelMode(MODE_I))
         {
             client.sendMessage(
@@ -49,8 +50,8 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
     }
     else
     {
+        // Channel doesn't exist, create it
         channel = new Channel(channelName);
-        // add the new channel to the map
         server.addChannel(channel);
     }
 

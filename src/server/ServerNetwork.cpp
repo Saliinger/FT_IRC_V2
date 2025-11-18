@@ -25,7 +25,24 @@ void Server::run()
             }
             else if (_pollfds[i].revents & (POLLERR | POLLHUP))
             {
-                std::cout << "Hang up" << std::endl; // need to close fd. keep client in case reconnect}
+                std::cout << "Client disconnected: fd " << _pollfds[i].fd << std::endl;
+                std::map<int, Client *>::iterator it = _clients.find(_pollfds[i].fd);
+                if (it != _clients.end())
+                {
+                    Client *client = it->second;
+                    // Remove client from all channels
+                    const std::map<std::string, Channel *> &channels = client->getChannelList();
+                    for (std::map<std::string, Channel *>::const_iterator chIt = channels.begin();
+                         chIt != channels.end(); ++chIt)
+                    {
+                        chIt->second->removeClient(client);
+                    }
+                    close(_pollfds[i].fd);
+                    delete client;
+                    _clients.erase(it);
+                    _pollfds.erase(_pollfds.begin() + i);
+                    --i; // Adjust index after erase
+                }
             }
         }
     }

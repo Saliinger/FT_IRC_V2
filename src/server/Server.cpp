@@ -30,7 +30,7 @@ Server &Server::operator=(const Server &src)
 
 Server::~Server()
 {
-    // delet each client and channel
+    // delete each client
     std::map<int, Client *>::iterator it = _clients.begin();
     std::map<int, Client *>::iterator ite = _clients.end();
     while (it != ite)
@@ -39,12 +39,22 @@ Server::~Server()
         it++;
     }
 
+    // delete each channel
     std::map<std::string, Channel *>::iterator itc = _channels.begin();
     std::map<std::string, Channel *>::iterator itce = _channels.end();
     while (itc != itce)
     {
         delete itc->second;
         itc++;
+    }
+
+    // delete departed clients
+    std::vector<Client *>::iterator itd = _departedClients.begin();
+    std::vector<Client *>::iterator itde = _departedClients.end();
+    while (itd != itde)
+    {
+        delete *itd;
+        itd++;
     }
 
     delete _commandHandler;
@@ -138,7 +148,11 @@ void Server::removeDeparted(Client &client)
     for (std::vector<Client *>::iterator it = _departedClients.begin(); it != _departedClients.end(); it++)
     {
         if ((*it)->getUsername() == client.getUsername())
+        {
+            delete *it;
             _departedClients.erase(it);
+            return;
+        }
     }
 }
 
@@ -154,8 +168,23 @@ Client *Server::getDeparted(const std::string &name)
 
 void Server::removeClient(Client &client)
 {
-    std::map<int, Client *>::iterator pos = _clients.find(client.getFd());
-    _clients.erase(pos);
+    int fd = client.getFd();
+    std::map<int, Client *>::iterator pos = _clients.find(fd);
+    if (pos != _clients.end())
+    {
+        // Remove from pollfds
+        for (std::vector<pollfd>::iterator it = _pollfds.begin(); it != _pollfds.end(); ++it)
+        {
+            if (it->fd == fd)
+            {
+                _pollfds.erase(it);
+                break;
+            }
+        }
+        close(fd);
+        delete pos->second;
+        _clients.erase(pos);
+    }
 }
 
 bool Server::channelExist(const std::string &name)
