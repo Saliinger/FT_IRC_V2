@@ -1,161 +1,166 @@
 #include "../../include/Server.hpp"
 
-Server::Server() : _clients(), _channels(), _isRunning(false), _commandHandler(new CommandHandler()) {}
+Server::Server() : _clients(), _channels(), _isRunning(false), _commandHandler(new CommandHandler())
+{
+}
 
-Server::Server(const Server &src) : _clients(src._clients), _channels(src._channels), _isRunning(src._isRunning), _sig(src._sig), _commandHandler(new CommandHandler(*src._commandHandler)) {}
+Server::Server(const Server &src)
+    : _clients(src._clients), _channels(src._channels), _isRunning(src._isRunning), _sig(src._sig),
+      _commandHandler(new CommandHandler(*src._commandHandler))
+{
+}
 
 Server &Server::operator=(const Server &src)
 {
-	if (this != &src)
-	{
-		_clients = src._clients;
-		_channels = src._channels;
-		_pass = src._pass;
-		_port = src._port;
-		_pollfds = src._pollfds;
-		_server_fd = src._server_fd;
-		_isRunning = src._isRunning;
-		_sig = src._sig;
-		delete _commandHandler;
-		_commandHandler = new CommandHandler(*src._commandHandler);
-	}
-	return *this;
+    if (this != &src)
+    {
+        _clients = src._clients;
+        _channels = src._channels;
+        _pass = src._pass;
+        _port = src._port;
+        _pollfds = src._pollfds;
+        _server_fd = src._server_fd;
+        _isRunning = src._isRunning;
+        _sig = src._sig;
+        delete _commandHandler;
+        _commandHandler = new CommandHandler(*src._commandHandler);
+    }
+    return *this;
 }
 
 Server::~Server()
 {
-	// delet each client and channel
-	std::map<int, Client *>::iterator it = _clients.begin();
-	std::map<int, Client *>::iterator ite = _clients.end();
-	while (it != ite)
-	{
-		delete it->second;
-		it++;
-	}
+    // delet each client and channel
+    std::map<int, Client *>::iterator it = _clients.begin();
+    std::map<int, Client *>::iterator ite = _clients.end();
+    while (it != ite)
+    {
+        delete it->second;
+        it++;
+    }
 
-	std::map<std::string, Channel *>::iterator itc = _channels.begin();
-	std::map<std::string, Channel *>::iterator itce = _channels.end();
-	while (itc != itce)
-	{
-		delete itc->second;
-		itc++;
-	}
+    std::map<std::string, Channel *>::iterator itc = _channels.begin();
+    std::map<std::string, Channel *>::iterator itce = _channels.end();
+    while (itc != itce)
+    {
+        delete itc->second;
+        itc++;
+    }
 
-	delete _commandHandler;
+    delete _commandHandler;
 }
 
 Server::Server(std::string pass, int port) : _pass(pass), _port(port), _commandHandler(new CommandHandler())
 {
-	_server_fd = socket(AF_INET, SOCK_STREAM, 0); // open a socket for this program
-	if (_server_fd < 0)
-		throw std::runtime_error("Error: socket failed.");
+    _server_fd = socket(AF_INET, SOCK_STREAM, 0); // open a socket for this program
+    if (_server_fd < 0)
+        throw std::runtime_error("Error: socket failed.");
 
-	int opt = 1;
-	setsockopt(_server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)); // block socket for this program
+    int opt = 1;
+    setsockopt(_server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)); // block socket for this program
 
-	sockaddr_in addr;
+    sockaddr_in addr;
 
-	addr.sin_family = AF_INET;		   // setup for ipv4 can use AF_INET6 for ipv6
-	addr.sin_port = htons(_port);	   // host on port
-	addr.sin_addr.s_addr = INADDR_ANY; // open to all address incomming connection
+    addr.sin_family = AF_INET;         // setup for ipv4 can use AF_INET6 for ipv6
+    addr.sin_port = htons(_port);      // host on port
+    addr.sin_addr.s_addr = INADDR_ANY; // open to all address incomming connection
 
-	if (bind(_server_fd, (sockaddr *)&addr, sizeof(addr)) < 0)
-		throw std::runtime_error("Error: bind failed.");
-	if (listen(_server_fd, SOMAXCONN) < 0)
-		throw std::runtime_error("Error: listen failed.");
+    if (bind(_server_fd, (sockaddr *)&addr, sizeof(addr)) < 0)
+        throw std::runtime_error("Error: bind failed.");
+    if (listen(_server_fd, SOMAXCONN) < 0)
+        throw std::runtime_error("Error: listen failed.");
 
-	fcntl(_server_fd, F_SETFL, O_NONBLOCK); // set to non blocking means that we don't wait for a respond
+    fcntl(_server_fd, F_SETFL, O_NONBLOCK); // set to non blocking means that we don't wait for a respond
 
-	std::cout << "FT_IRC\nPort: " << _port << "\nPassword: " << _pass << std::endl;
-	_pollfds.push_back((pollfd){
-		_server_fd,
-		POLLIN,
-		0});
-	_sig = 0;
+    std::cout << "FT_IRC\nPort: " << _port << "\nPassword: " << _pass << std::endl;
+    _pollfds.push_back((pollfd){_server_fd, POLLIN, 0});
+    _sig = 0;
 }
 
 bool Server::isNicknameUsed(const std::string &nick) const
 {
-	for (std::map<int, Client *>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
-	{
-		Client *client = it->second;
-		if (client && client->getNickname() == nick)
-			return (true);
-	}
-	return (false);
+    for (std::map<int, Client *>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        Client *client = it->second;
+        if (client && client->getNickname() == nick)
+            return (true);
+    }
+    return (false);
 }
 
 const std::string &Server::getPassword() const
 {
-	return (_pass);
+    return (_pass);
 }
 
 std::map<std::string, Channel *> Server::getChannels() const
 {
-	return (_channels);
+    return (_channels);
 }
 
 Channel *Server::getChannel(const std::string &channelName) const
 {
-	std::map<std::string, Channel *>::const_iterator it = _channels.find(channelName);
-	return (it->second);
+    std::map<std::string, Channel *>::const_iterator it = _channels.find(channelName);
+    if (it == _channels.end())
+        return (NULL);
+    return (it->second);
 }
 
 Client *Server::getClient(const std::string &clientNick) const
 {
-	std::map<int, Client *>::const_iterator it = _clients.begin();
-	std::map<int, Client *>::const_iterator ite = _clients.end();
+    std::map<int, Client *>::const_iterator it = _clients.begin();
+    std::map<int, Client *>::const_iterator ite = _clients.end();
 
-	while (it != ite)
-	{
-		if (it->second->getNickname() == clientNick)
-			return it->second;
-		++it;
-	}
-	return NULL;
+    while (it != ite)
+    {
+        if (it->second->getNickname() == clientNick)
+            return it->second;
+        ++it;
+    }
+    return NULL;
 }
 
 void Server::addChannel(Channel *to_add)
 {
-	_channels[to_add->getChannelName()] = to_add;
-	std::cout << "DEBUG: channel added " + to_add->getChannelName() << std::endl;
+    _channels[to_add->getChannelName()] = to_add;
+    std::cout << "DEBUG: channel added " + to_add->getChannelName() << std::endl;
 }
 
 void Server::addDeparted(Client &client)
 {
-	Client *to_depart = new Client(client);
-	// Client to_depart(client); // possible used of that
-	_departedClients.push_back(to_depart);
+    Client *to_depart = new Client(client);
+    // Client to_depart(client); // possible used of that
+    _departedClients.push_back(to_depart);
 }
 
 void Server::removeDeparted(Client &client)
 {
-	for (std::vector<Client *>::iterator it = _departedClients.begin(); it != _departedClients.end(); it++)
-	{
-		if ((*it)->getUsername() == client.getUsername())
-			_departedClients.erase(it);
-	}
+    for (std::vector<Client *>::iterator it = _departedClients.begin(); it != _departedClients.end(); it++)
+    {
+        if ((*it)->getUsername() == client.getUsername())
+            _departedClients.erase(it);
+    }
 }
 
 Client *Server::getDeparted(const std::string &name)
 {
-	for (std::vector<Client *>::iterator it = _departedClients.begin(); it != _departedClients.end(); it++)
-	{
-		if ((*it)->getUsername() == name)
-			return *it;
-	}
-	return NULL;
+    for (std::vector<Client *>::iterator it = _departedClients.begin(); it != _departedClients.end(); it++)
+    {
+        if ((*it)->getUsername() == name)
+            return *it;
+    }
+    return NULL;
 }
 
 void Server::removeClient(Client &client)
 {
-	std::map<int, Client *>::iterator pos = _clients.find(client.getFd());
-	_clients.erase(pos);
+    std::map<int, Client *>::iterator pos = _clients.find(client.getFd());
+    _clients.erase(pos);
 }
 
 bool Server::channelExist(const std::string &name)
 {
-	if (_channels[name])
-		return true;
-	return false;
+    if (_channels[name])
+        return true;
+    return false;
 }

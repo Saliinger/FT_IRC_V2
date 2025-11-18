@@ -13,6 +13,7 @@
 #include "../../include/QuitCommand.hpp"
 #include "../../include/PartCommand.hpp"
 #include "../../include/TopicCommand.hpp"
+#include "../../include/ModeCommand.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -31,6 +32,7 @@ CommandHandler::CommandHandler()
 	_commands["QUIT"] = new QuitCommand();
 	_commands["PART"] = new PartCommand();
 	_commands["TOPIC"] = new TopicCommand();
+	_commands["MODE"] = new ModeCommand();
 }
 
 CommandHandler::~CommandHandler()

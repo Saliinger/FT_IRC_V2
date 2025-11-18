@@ -28,6 +28,8 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         return;
     }
 
+   
+
     std::string channelName = args[0];
     std::string mode = args[1];
 
@@ -51,11 +53,19 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         return;
     }
 
+	 std::cout << "DEBUG ARGS:" << std::endl;
+    for (std::vector<std::string>::const_iterator it = args.begin(); it != args.end(); it++)
+    {
+        std::cout << *it << std::endl;
+    }
+    std::cout << "DEBUG END" << std::endl;
+
     bool action = true;
     std::vector<std::string>::const_iterator itArgs = args.begin() + 2;
 
     for (std::string::iterator it = mode.begin(); it != mode.end(); it++)
     {
+        // std::cout << "DEBUG: " << *it << std::endl;
         switch (*it)
         {
         // enable / disable
