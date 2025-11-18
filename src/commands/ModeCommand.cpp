@@ -71,9 +71,13 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         if (channel->getChannelMode(MODE_K))
             mode += " " + channel->getPassword();
         if (channel->getChannelMode(MODE_L))
-            mode += " " + channel->getClientLimit();
+        {
+            std::ostringstream oss;
+            oss << channel->getClientLimit();
+            mode += " " + oss.str();
+        }
 
-        client.sendMessage(formatReply(RPL_CHANNELMODEIS, "-!-", mode));
+        client.sendMessage(formatReply(RPL_CHANNELMODEIS, client.getNickname(), channelName + " " + mode));
         return;
     }
 
