@@ -41,7 +41,7 @@ class Client
         void                                    appendToRecvBuffer(const std::string &data);
         bool                                    hasCompleteMessage();
         std::string                             extractMessage();
-        void                                    joinChannel(Channel *channel);
+        bool                                    joinChannel(Channel *channel);
         void                                    leaveChannel(Channel *channel);
         void                                    sendMessage(const std::string &message);
 };

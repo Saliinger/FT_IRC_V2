@@ -81,11 +81,13 @@ std::string Client::extractMessage()
     return (message);
 }
 
-void    Client::joinChannel(Channel *channel)
+bool    Client::joinChannel(Channel *channel)
 {
     std::cout << "Client: " << _username << " joined channel: " << channel->getChannelName() << std::endl;
     _channelList[channel->getChannelName()] = channel;
-    channel->addClient(this);
+    if (!channel->addClient(this))
+        return (false);
+    return (true);
 }
 
 void    Client::leaveChannel(Channel *channel)
