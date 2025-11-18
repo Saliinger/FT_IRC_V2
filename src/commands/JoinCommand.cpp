@@ -8,15 +8,17 @@
 
 void JoinCommand::execute(Server &server, Client &client, const std::vector<std::string> &args)
 {
+    std::string clientName = client.getNickname();
     if (!client.isRegistered())
     {
-        client.sendMessage(":localhost 451 * :You have not registered\r\n");
+        client.sendMessage(
+            formatError(ERR_NOTREGISTERED, clientName.empty() ? "*" : clientName, "", "You have not registered"));
         return;
     }
 
     if (args.empty())
     {
-        client.sendMessage(":localhost 461 " + client.getNickname() + " JOIN :Not enough parameters\r\n");
+        client.sendMessage(formatError(ERR_NEEDMOREPARAMS, client.getNickname(), "JOIN", "Not enough parameters"));
         return;
     }
 
@@ -25,7 +27,7 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
 
     if (channelName.empty() || (channelName[0] != '#' && channelName[0] != '&'))
     {
-        client.sendMessage(":localhost 403 " + client.getNickname() + " " + channelName + " :No such channel\r\n");
+        client.sendMessage(formatError(ERR_NOSUCHCHANNEL, client.getNickname(), channelName, "No such channel"));
         return;
     }
 
@@ -37,10 +39,16 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
     {
         channel = it->second;
 
+        if (channel->getChannelMode(MODE_I))
+        {
+            client.sendMessage(
+                formatError(ERR_INVITEONLYCHAN, client.getNickname(), channelName, "Cannot join channel (+i)"));
+            return;
+        }
         if (!channel->getPassword().empty() && channel->getPassword() != channelKey)
         {
-            client.sendMessage(":localhost 475 " + client.getNickname() + " " + channelName +
-                               " :Cannot join channel (+k)\r\n");
+            client.sendMessage(
+                formatError(ERR_BADCHANNELKEY, client.getNickname(), channelName, "Cannot join channel (+k)"));
             return;
         }
     }
@@ -51,7 +59,12 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
         server.addChannel(channel);
     }
 
-    client.joinChannel(channel);
+    if (!client.joinChannel(channel))
+    {
+        client.sendMessage(
+            formatError(ERR_CHANNELISFULL, client.getNickname(), channelName, "Cannot join channel (+l)"));
+        return;
+    }
 
     // Make first user operator when creating new channel
     if (channel->getClients().size() == 1)
@@ -63,13 +76,11 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
                        " JOIN :" + channelName + "\r\n");
 
     if (!channel->getTopic().empty())
-        client.sendMessage(":localhost 332 " + client.getNickname() + " " + channelName + " :" + channel->getTopic() +
-                           "\r\n");
+        client.sendMessage(formatReply(RPL_TOPIC, client.getNickname(), channelName + " :" + channel->getTopic()));
     else
-        client.sendMessage(":localhost 331 " + client.getNickname() + " " + channelName + " :No topic is set\r\n");
+        client.sendMessage(formatReply(RPL_NOTOPIC, client.getNickname(), channelName + " :No topic is set"));
 
-    std::string namesList = ":localhost 353 " + client.getNickname() + " = " + channelName + " :";
-
+    std::string namesList;
     const std::map<int, Client *> &clients = channel->getClients();
     for (std::map<int, Client *>::const_iterator it = clients.begin(); it != clients.end(); ++it)
     {
@@ -77,10 +88,9 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
             namesList += "@";
         namesList += it->second->getNickname() + " ";
     }
-    namesList += "\r\n";
 
-    client.sendMessage(namesList);
-    client.sendMessage(":localhost 366 " + client.getNickname() + " " + channelName + " :End of /NAMES list\r\n");
+    client.sendMessage(formatReply(RPL_NAMREPLY, client.getNickname(), "= " + channelName + " :" + namesList));
+    client.sendMessage(formatReply(RPL_ENDOFNAMES, client.getNickname(), channelName + " :End of /NAMES list"));
     channel->sendMessageToClients(client.getFd(), ":" + client.getNickname() + "!" + client.getUsername() + "@" +
                                                       client.getIpAdress() + " JOIN :" + channelName + "\r\n");
 }

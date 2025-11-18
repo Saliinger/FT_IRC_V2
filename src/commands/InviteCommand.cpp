@@ -1,11 +1,11 @@
 #include "../../include/InviteCommand.hpp"
-#include "../../include/Server.hpp"
-#include "../../include/Client.hpp"
 #include "../../include/Channel.hpp"
+#include "../../include/Client.hpp"
+#include "../../include/Server.hpp"
 
 #include <iostream>
 
-void InviteCommand::execute(Server &server, Client &client, const std::vector<std::string> &args) 
+void InviteCommand::execute(Server &server, Client &client, const std::vector<std::string> &args)
 {
     if (!client.isRegistered())
     {
@@ -18,25 +18,22 @@ void InviteCommand::execute(Server &server, Client &client, const std::vector<st
         client.sendMessage(":localhost 461 " + client.getNickname() + " INVITE :Not enough parameters\r\n");
         return;
     }
-    
+
     std::string targetNick = args[0];
     std::string channelName = args[1];
-    
-    std::map<std::string, Channel *> channels = server.getChannels();
-    std::map<std::string, Channel *>::iterator it = channels.find(channelName);
-    
-    if (it == channels.end())
+
+    Channel *channel = server.getChannel(channelName);
+    if (!channel)
     {
-        client.sendMessage(":localhost 403 " + client.getNickname() + " " + channelName + " :No such channel\r\n");
+        client.sendMessage(formatError(ERR_NOSUCHCHANNEL, client.getNickname(), channelName, "don't exist"));
         return;
     }
-    
-    Channel *channel = it->second;
-    
-    const std::map<int, Client *>& clients = channel->getClients();
+
+    const std::map<int, Client *> &clients = channel->getClients();
     if (clients.find(client.getFd()) == clients.end())
     {
-        client.sendMessage(":localhost 442 " + client.getNickname() + " " + channelName + " :You're not on that channel\r\n");
+        client.sendMessage(":localhost 442 " + client.getNickname() + " " + channelName +
+                           " :You're not on that channel\r\n");
         return;
     }
 
@@ -50,7 +47,7 @@ void InviteCommand::execute(Server &server, Client &client, const std::vector<st
             break;
         }
     }
-    
+
     if (!targetClient)
     {
         client.sendMessage(":localhost 401 " + client.getNickname() + " " + targetNick + " :No such nick/channel\r\n");
@@ -59,11 +56,12 @@ void InviteCommand::execute(Server &server, Client &client, const std::vector<st
 
     if (clients.find(targetClient->getFd()) != clients.end())
     {
-        client.sendMessage(":localhost 443 " + client.getNickname() + " " + targetNick + " " + channelName + " :is already on channel\r\n");
+        client.sendMessage(":localhost 443 " + client.getNickname() + " " + targetNick + " " + channelName +
+                           " :is already on channel\r\n");
         return;
     }
 
-    targetClient->sendMessage(":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getIpAdress() + 
-                             " INVITE " + targetNick + " :" + channelName + "\r\n");
+    targetClient->sendMessage(":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getIpAdress() +
+                              " INVITE " + targetNick + " :" + channelName + "\r\n");
     client.sendMessage(":localhost 341 " + client.getNickname() + " " + targetNick + " " + channelName + "\r\n");
 }
