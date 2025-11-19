@@ -52,6 +52,8 @@ public:
 	Client *getDeparted(const std::string &name); // use for reconnect on whois
 	void removeClient(Client &client);
 	bool channelExist(const std::string &name);
+	void checkChannelsEmpty();
+	void checkChannelsEmptyOp();
 
 private:
 	static Server *_instance;

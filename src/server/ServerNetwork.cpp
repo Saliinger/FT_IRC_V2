@@ -1,6 +1,37 @@
 // # Socket/connection handling
 #include "../../include/Server.hpp"
 
+void Server::checkChannelsEmpty()
+{
+    for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+    {
+        Channel *channel = it->second;
+        if (channel->getClients().empty())
+        {
+            delete channel;
+            _channels.erase(it);
+        }
+    }
+}
+
+void Server::checkChannelsEmptyOp()
+{
+    for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+    {
+        Channel *channel = it->second;
+        if (channel->getOperators().empty())
+        {
+            Client *client = channel->getClients().begin()->second;
+
+            channel->setOperator(client);
+            std::string modeChange = ":ft_irc MODE " 
+                    + channel->getChannelName() 
+                    + " +o " + client->getNickname() + "\r\n";
+            channel->sendMessageToClients(-1, modeChange);
+        }
+    }
+}
+
 void Server::run()
 {
     _isRunning = true;
@@ -45,6 +76,8 @@ void Server::run()
                 }
             }
         }
+        checkChannelsEmpty();
+        checkChannelsEmptyOp();
     }
     std::cout << "Server stopped." << std::endl;
 }
