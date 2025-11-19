@@ -43,19 +43,28 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
         // Channel exists, check restrictions
         if (channel->getChannelMode(MODE_I))
         {
-            if (channel->isInvited(&client))
+            if (!channel->isInvited(&client))
             {
-                if (!client.joinChannel(channel))
-                {
-                    client.sendMessage(
-                        formatError(ERR_CHANNELISFULL, client.getNickname(), channelName, "Cannot join channel (+l)"));
-                    return;
-                }
-                channel->removeFromInviteList(&client);
+                client.sendMessage(
+                    formatError(ERR_INVITEONLYCHAN, client.getNickname(), channelName, "Cannot join channel (+i)"));
+                return;
             }
-            client.sendMessage(
-                formatError(ERR_INVITEONLYCHAN, client.getNickname(), channelName, "Cannot join channel (+i)"));
-            return;
+            if (!client.joinChannel(channel))
+            {
+                client.sendMessage(
+                    formatError(ERR_CHANNELISFULL, client.getNickname(), channelName, "Cannot join channel (+l)"));
+                return;
+            }
+            channel->removeFromInviteList(&client);
+        }
+        else
+        {
+            if (!client.joinChannel(channel))
+            {
+                client.sendMessage(
+                    formatError(ERR_CHANNELISFULL, client.getNickname(), channelName, "Cannot join channel (+l)"));
+                return;
+            }
         }
     }
     else
@@ -63,13 +72,12 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
         // Channel doesn't exist, create it
         channel = new Channel(channelName);
         server.addChannel(channel);
-    }
-
-    if (!client.joinChannel(channel))
-    {
-        client.sendMessage(
-            formatError(ERR_CHANNELISFULL, client.getNickname(), channelName, "Cannot join channel (+l)"));
-        return;
+        if (!client.joinChannel(channel))
+        {
+            client.sendMessage(
+                formatError(ERR_CHANNELISFULL, client.getNickname(), channelName, "Cannot join channel (+l)"));
+            return;
+        }
     }
 
     // Make first user operator when creating new channel

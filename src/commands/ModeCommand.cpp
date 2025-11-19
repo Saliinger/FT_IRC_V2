@@ -122,7 +122,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
                     channel->setChannelMode(MODE_K, action);
                     {
                         std::string modeChange = ":" + client.getNickname() + "!~" + client.getUsername() +
-                                                 "@ft_irc MODE " + channelName + " +k " + *itArgs + "\r\n";
+                                                 "@ft_irc MODE " + channelName + " +k\r\n";
                         channel->sendMessageToClients(-1, modeChange);
                     }
                     itArgs++;
